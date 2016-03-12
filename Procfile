@@ -1,1 +1,1 @@
-web: node shared-server/index.js
+web: node index.js
