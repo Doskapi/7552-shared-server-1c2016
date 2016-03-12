@@ -6,6 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": "4.x",
+    "npm": "3.x"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/fmesteban/7552-shared-server-1c2016.git"
