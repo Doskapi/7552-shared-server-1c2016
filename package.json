@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/fmesteban/7552-shared-server-1c2016#readme",
   "dependencies": {
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "massive": "^2.1.0"
   }
 }
