@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<style>
+table, th , td  {
+  border: 1px solid grey;
+  border-collapse: collapse;
+  padding: 5px;
+}
+table tr:nth-child(odd)	{
+  background-color: #f1f1f1;
+}
+table tr:nth-child(even) {
+  background-color: #ffffff;
+}
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<body>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+
+<p>Today's welcome message is:</p>
+<table>
+  <tr ng-repeat="x in myData">
+    <td>{{ x.id }}</td>
+    <td>{{ x.data.name }}</td>
+    <td>{{ x.data.interest }}</td>
+  </tr>
+</table>
+
+</div>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $http) {
+    $http.get("http://localhost:5000/users")
+    .then(function(response) {
+        $scope.myData = response.data;
+    });
+});
+</script>
+
+</body>
+</html>
