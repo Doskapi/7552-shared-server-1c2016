@@ -56,4 +56,31 @@ router.get('/', function(req, res) {
 
 });
 
+// POST USERS
+router.post('/', function(req, res) {
+
+  console.log(req.body);
+
+  // var client = new pg.Client(connectionString);
+  // client.connect();
+  // var query = client.query('CREATE TABLE users(id SERIAL PRIMARY KEY, data json)');
+  // query.on('end', function() { client.end(); });
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    var results = [];
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err});
+    }
+
+    // SQL Query > Insert Data
+    client.query("INSERT INTO users(data) values($1)",[req.body.user]);
+
+  });
+
+});
+
 module.exports = router;
