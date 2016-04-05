@@ -37,7 +37,6 @@ router.get('/', function(req, res) {
 
 // Alta de usuario
 router.post('/', function(req, res) {
-
   //TODO:: NO BORRAR CON ESTO CREO LA TABLA
   // var client = new pg.Client(connectionString);
   // client.connect();
