@@ -22,7 +22,8 @@ app.listen(app.get('port'), function () {
   console.log('Example app listening on port 5000!');
 });
 
-
+app.get('/', function(req, res) {
+});
 
 // Listado de usuarios
 app.get('/users', function(req, res) {
