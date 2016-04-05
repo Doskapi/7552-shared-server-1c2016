@@ -25,7 +25,7 @@ app.listen(app.get('port'), function () {
 
 
 // Listado de usuarios
-app.get('/', function(req, res) {
+app.get('/users', function(req, res) {
 
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
@@ -57,7 +57,7 @@ app.get('/', function(req, res) {
 });
 
 // Alta de usuario
-app.post('/', function(req, res) {
+app.post('/users', function(req, res) {
 
   //TODO:: NO BORRAR CON ESTO CREO LA TABLA
   // var client = new pg.Client(connectionString);
@@ -83,7 +83,7 @@ app.post('/', function(req, res) {
 });
 
 // Consulta perfil usuario
-app.get('/id', function(req, res) {
+app.get('/users/id', function(req, res) {
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
     // Handle connection errors
