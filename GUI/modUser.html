@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<body>
+  <div ng-app="myApp" ng-controller="formCtrl">
+    <form novalidate>
+      Name:<br>
+      <input type="text" ng-model="user.name"><br>
+      Alias:<br>
+      <input type="text" ng-model="user.alias"><br>
+      E-Mail:<br>
+      <input type="email" ng-model="user.email"><br>
+      Gender:<br>
+      <input type="text" ng-model="user.gender"><br>
+      Interest Band:<br>
+      <input type="text" ng-model="band.value"><br>
+      Interest Out:<br>
+      <input type="text" ng-model="out.value"><br>
+      Latitude:<br>
+      <input type="number" ng-model="user.location.latitude"><br>
+      Longitud:<br>
+      <input type="number" ng-model="user.location.longitud"><br>
+      <br><br>
+      <button ng-click="logUser()">log</button>
+    </form>
+    <p>form = {{user}}</p>
+    <p>master = {{master}}</p>
+  </div>
+
+  <script>
+  var app = angular.module('myApp', []);
+  app.controller('formCtrl', function($scope,$http) {
+    $scope.band={'category':'band','value':undefined};
+    $scope.out={'category':'out','value':undefined}
+    $scope.user = {};
+    $scope.user.interest = [];
+    $scope.master = {};
+    $scope.logUser = function() {
+      if($scope.band.value !== undefined) $scope.user.interest.push($scope.band);
+      if($scope.out.value !== undefined) $scope.user.interest.push($scope.out);
+      $http({
+        url: 'http://localhost:5000/users',
+        method: "PUT",
+        data: { 'user' : $scope.user}
+      }).then(function(response) {
+        // success
+      },
+      function(response) { // optional
+        // failed
+      });
+    };
+    // $scope.logUser();
+  });
+  </script>
+
+</body>
+</html>

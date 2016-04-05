@@ -56,6 +56,7 @@ router.post('/', function(req, res) {
     // SQL Query > Insert Data
     client.query("INSERT INTO users(data) values($1)",[req.body.user]);
 
+    return res.status(201);
   });
 
 });
