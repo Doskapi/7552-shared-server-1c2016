@@ -23,7 +23,7 @@ app.listen(app.get('port'), function () {
 });
 
 app.get('/', function(req, res) {
-  console.log('Example app listening on port 5000!');
+  res.log('Example app listening on port 5000!');
 });
 
 
