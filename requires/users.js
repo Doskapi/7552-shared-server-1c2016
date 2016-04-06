@@ -37,6 +37,7 @@ router.get('/', function(req, res) {
 
 // Alta de usuario
 router.post('/', function(req, res) {
+
   //TODO:: NO BORRAR CON ESTO CREO LA TABLA
   // var client = new pg.Client(connectionString);
   // client.connect();
@@ -54,15 +55,26 @@ router.post('/', function(req, res) {
     }
 
     // SQL Query > Insert Data
-    client.query("INSERT INTO users(data) values($1)",[req.body.user]);
+    var query = client.query("INSERT INTO users(data) values($1) RETURNING id",[req.body.user],function(err, result) {
+      if (err) {
+        console.log(err);
+      } else {
+        req.body.user.id = result.rows[0].id;
+        console.log(req.body.user);
+        res.status(201).json(req.body.user);
+      }
+    });
 
-    return res.status(201);
   });
 
 });
 
 // Consulta perfil usuario
-router.get('/id', function(req, res) {
+router.get('/[0-9]+', function(req, res) {
+
+  //Obtengo id de la ruta
+  var id = req.url.substring(1);
+
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
     // Handle connection errors
@@ -72,7 +84,7 @@ router.get('/id', function(req, res) {
       return res.status(500).json({ success: false, data: err});
     }
     // Obtengo todos las filas de ta tabla users, los usuarios
-    var query = client.query("SELECT * FROM users WHERE id ="+req.query.id);
+    var query = client.query("SELECT * FROM users WHERE id ="+id);
 
     // Agrego al array los usuarios, uno por uno
     var results = [];
@@ -90,5 +102,64 @@ router.get('/id', function(req, res) {
   });
 
 });
+
+// Modificacion de usuario
+router.put('/[0-9]+', function(req, res) {
+
+  //Obtengo id de la ruta
+  var id = req.url.substring(1);
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err});
+    }
+
+    // SQL Query > Insert Data
+    client.query("UPDATE users SET data=($1) WHERE id=($2)", [req.body.user, id],function(err, result) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(200);
+      }
+    });
+
+  });
+
+});
+
+// Eliminacion de usuario
+router.delete('/[0-9]+', function(req, res) {
+
+  //Obtengo id de la ruta
+  var id = req.url.substring(1);
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err});
+    }
+
+    // SQL Query > Delete user
+    client.query("DELETE FROM users WHERE id=($1)", [id],function(err, result) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(200);
+      }
+    });
+
+  });
+
+});
+
 
 module.exports = router;

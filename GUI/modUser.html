@@ -4,6 +4,8 @@
 <body>
   <div ng-app="myApp" ng-controller="formCtrl">
     <form novalidate>
+      ID:<br>
+      <input type="number" ng-model="id"><br>
       Name:<br>
       <input type="text" ng-model="user.name"><br>
       Alias:<br>
@@ -21,10 +23,8 @@
       Longitud:<br>
       <input type="number" ng-model="user.location.longitud"><br>
       <br><br>
-      <button ng-click="logUser()">log</button>
+      <button ng-click="modifyUser()">Modify User</button>
     </form>
-    <p>form = {{user}}</p>
-    <p>master = {{master}}</p>
   </div>
 
   <script>
@@ -35,11 +35,12 @@
     $scope.user = {};
     $scope.user.interest = [];
     $scope.master = {};
+    $scope.id = undefined;
     $scope.logUser = function() {
       if($scope.band.value !== undefined) $scope.user.interest.push($scope.band);
       if($scope.out.value !== undefined) $scope.user.interest.push($scope.out);
       $http({
-        url: 'http://localhost:5000/users',
+        url: 'http://localhost:5000/users/'+$scope.id,
         method: "PUT",
         data: { 'user' : $scope.user}
       }).then(function(response) {

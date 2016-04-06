@@ -20,25 +20,17 @@ table tr:nth-child(even) {
       ID:<br>
       <input type="number" ng-model="ID"><br>
       <br><br>
-      <button ng-click="getUser()">get</button>
+      <button ng-click="deleteUser()">Delete User</button>
     </form>
-    <br><br>
-    <table>
-      <tr ng-repeat="x in myData">
-        <td>{{ x.id }}</td>
-        <td>{{ x.data.name }}</td>
-        <td>{{ x.data.interest }}</td>
-      </tr>
-    </table>
   </div>
 
   <script>
   var app = angular.module('myApp', []);
   app.controller('formCtrl', function($scope,$http) {
     $scope.ID=undefined;
-    $scope.getUser = function() {
-      $http.get('http://localhost:5000/users/'+$scope.ID).then(function(response) {
-        $scope.myData = response.data;
+    $scope.deleteUser = function() {
+      $http.delete('http://localhost:5000/users/'+$scope.ID).then(function(response) {
+        console.log(response);
       });
     };
   });

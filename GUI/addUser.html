@@ -21,10 +21,8 @@
       Longitud:<br>
       <input type="number" ng-model="user.location.longitud"><br>
       <br><br>
-      <button ng-click="logUser()">log</button>
+      <button ng-click="addUser()">Add User</button>
     </form>
-    <p>form = {{user}}</p>
-    <p>master = {{master}}</p>
   </div>
 
   <script>
@@ -43,13 +41,12 @@
         method: "POST",
         data: { 'user' : $scope.user}
       }).then(function(response) {
-        // success
+        console.log(response.data);
       },
       function(response) { // optional
         // failed
       });
     };
-    // $scope.logUser();
   });
   </script>
 
