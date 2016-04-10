@@ -1,34 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-<body>
-  <div ng-app="myApp" ng-controller="formCtrl">
-    <form novalidate>
-      Name:<br>
-      <input type="text" ng-model="user.name"><br>
-      Alias:<br>
-      <input type="text" ng-model="user.alias"><br>
-      E-Mail:<br>
-      <input type="email" ng-model="user.email"><br>
-      Gender:<br>
-      <label class="radio-inline">
-        <input name="cssPre" id="css3" value="Male" class="active" type="radio" ng-model="user.gender">Male
-      </label>
-      <label class="radio-inline">
-        <input name="cssPre" id="css1" value="Female" type="radio" ng-model="user.gender">Female<br>
-      </label>
-      <!-- <input type="text" ng-model="user.gender"><br> -->
-      Interest Music:<br>
-      <input type="text" ng-model="music.value"><br>
-      Latitude:<br>
-      <input type="number" ng-model="user.location.latitude"><br>
-      Longitud:<br>
-      <input type="number" ng-model="user.location.longitud"><br>
-      <br><br>
-      <button ng-click="addUser()">Add User</button>
-    </form>
-  </div>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="js/bootstrap.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <div class="container">
+    <div class="col-md-8">
+      <div ng-app="myApp" ng-controller="formCtrl">
+        <form>
+          <div class="form-group">
+            <label for="Name">Name</label>
+            <input type="text" class="form-control" id="exampleInputName" placeholder="Name" ng-model="user.name">
+          </div>
+
+          <div class="form-group">
+            <label for="Alias">Alias</label>
+            <input type="text" class="form-control" id="exampleInputAlias" placeholder="Alias" ng-model="user.alias">
+          </div>
+
+          <label for="Email">E-Mail</label>
+          <div class="input-group">
+            <input type="email" class="form-control" placeholder="Email" aria-describedby="basic-addon2"
+            ng-model="user.email">
+            <span class="input-group-addon" id="basic-addon2">@example.com</span>
+          </div>
+
+          <br>
+
+          <label for="Name">Sex</label>
+          <div class="radio-inline">
+            <label class="radio-inline">
+              <input name="cssPre" id="css3" value="Male" class="active" type="radio" ng-model="user.gender">Male
+            </label>
+            <label class="radio-inline">
+              <input name="cssPre" id="css1" value="Female" type="radio" ng-model="user.gender">Female
+            </label>
+          </div>
+
+          <br>
+
+          <label for="music">Interest Music</label>
+          <div class="form-group">
+            <input type="text" class="form-control" id="exampleInputMusic" placeholder="Band/Artist" ng-model="music.value">
+          </div>
+
+          <div class="form-group">
+            <label for="latitude">Latitude</label>
+            <input type="number" class="form-control" id="exampleInputLatitude" placeholder="Latitude" ng-model="user.location.latitude">
+          </div>
+
+          <div class="form-group">
+            <label for="longitud">Longitud</label>
+            <input type="number" class="form-control" id="exampleInputLongitud" placeholder="Longitud" ng-model="user.location.longitud">
+          </div>
+
+
+
+          <button type="button" class="btn btn-primary"ng-click="addUser()">Add User</button>
+
+        </form>
+      </div>
+    </div>
+  </div>
+  
   <script>
   var app = angular.module('myApp', []);
   app.controller('formCtrl', function($scope,$http) {

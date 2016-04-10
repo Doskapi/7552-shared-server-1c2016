@@ -1,56 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body>
-  <div ng-app="myApp" ng-controller="formCtrl">
-    <form novalidate>
-      ID:<br>
-      <input type="number" ng-model="id"><br>
-      Name:<br>
-      <input type="text" ng-model="user.name"><br>
-      Alias:<br>
-      <input type="text" ng-model="user.alias"><br>
-      E-Mail:<br>
-      <input type="email" ng-model="user.email"><br>
-      Gender:<br>
-      <input type="text" ng-model="user.gender"><br>
-      Interest Band:<br>
-      <input type="text" ng-model="band.value"><br>
-      Interest Out:<br>
-      <input type="text" ng-model="out.value"><br>
-      Latitude:<br>
-      <input type="number" ng-model="user.location.latitude"><br>
-      Longitud:<br>
-      <input type="number" ng-model="user.location.longitud"><br>
-      <br><br>
-      <button ng-click="modifyUser()">Modify User</button>
-    </form>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="js/bootstrap.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <div class="container">
+    <div class="col-md-8">
+      <div ng-app="myApp" ng-controller="formCtrl">
+        <form>
+
+          <div class="form-group">
+            <label for="ID">ID</label>
+            <input type="number" class="form-control" id="exampleID" placeholder="ID" ng-model="id">
+          </div>
+
+          <div class="form-group">
+            <label for="Name">Name</label>
+            <input type="text" class="form-control" id="exampleInputName" placeholder="Name" ng-model="user.name">
+          </div>
+
+          <div class="form-group">
+            <label for="Alias">Alias</label>
+            <input type="text" class="form-control" id="exampleInputAlias" placeholder="Alias" ng-model="user.alias">
+          </div>
+
+          <label for="Email">E-Mail</label>
+          <div class="input-group">
+            <input type="email" class="form-control" placeholder="Email" aria-describedby="basic-addon2"
+            ng-model="user.email">
+            <span class="input-group-addon" id="basic-addon2">@example.com</span>
+          </div>
+
+          <br>
+
+          <label for="Name">Sex</label>
+          <div class="radio-inline">
+            <label class="radio-inline">
+              <input name="cssPre" id="css3" value="Male" class="active" type="radio" ng-model="user.gender">Male
+            </label>
+            <label class="radio-inline">
+              <input name="cssPre" id="css1" value="Female" type="radio" ng-model="user.gender">Female
+            </label>
+          </div>
+
+          <br>
+
+          <label for="music">Interest Music</label>
+          <div class="form-group">
+            <input type="text" class="form-control" id="exampleInputMusic" placeholder="Band/Artist" ng-model="music.value">
+          </div>
+
+          <div class="form-group">
+            <label for="latitude">Latitude</label>
+            <input type="number" class="form-control" id="exampleInputLatitude" placeholder="Latitude" ng-model="user.location.latitude">
+          </div>
+
+          <div class="form-group">
+            <label for="longitud">Longitud</label>
+            <input type="number" class="form-control" id="exampleInputLongitud" placeholder="Longitud" ng-model="user.location.longitud">
+          </div>
+
+
+
+          <button type="button" class="btn btn-warning" ng-click="modUser()">Modify User</button>
+
+        </form>
+      </div>
+    </div>
   </div>
+
 
   <script>
   var app = angular.module('myApp', []);
   app.controller('formCtrl', function($scope,$http) {
-    $scope.band={'category':'band','value':undefined};
-    $scope.out={'category':'out','value':undefined}
+    $scope.music={'category':'music','value':undefined};
     $scope.user = {};
-    $scope.user.interest = [];
-    $scope.master = {};
+    $scope.user.interests = [];
     $scope.id = undefined;
-    $scope.logUser = function() {
-      if($scope.band.value !== undefined) $scope.user.interest.push($scope.band);
-      if($scope.out.value !== undefined) $scope.user.interest.push($scope.out);
+    $scope.modUser = function() {
+      if($scope.music.value !== undefined) $scope.user.interests.push($scope.music);
       $http({
         url: 'http://localhost:5000/users/'+$scope.id,
         method: "PUT",
         data: { 'user' : $scope.user}
       }).then(function(response) {
-        // success
+        console.log(response.data);
       },
       function(response) { // optional
         // failed
       });
     };
-    // $scope.logUser();
   });
   </script>
 

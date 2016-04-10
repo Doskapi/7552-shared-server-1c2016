@@ -1,39 +1,61 @@
 <!DOCTYPE html>
-<html>
-<style>
-table, th , td  {
-  border: 1px solid grey;
-  border-collapse: collapse;
-  padding: 5px;
-}
-table tr:nth-child(odd)	{
-  background-color: #f1f1f1;
-}
-table tr:nth-child(even) {
-  background-color: #ffffff;
-}
-</style>
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
 <body>
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="js/bootstrap.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 
-  <div ng-app="myApp" ng-controller="myCtrl">
+  <div class="container">
+    <div class="col-md-8">
+      <div ng-app="myApp" ng-controller="formCtrl">
+        <form>
 
-    <input type="button" value="Click Me!" ng-click="ButtonClick()" />
-    <table>
-      <tr ng-repeat="x in myData">
-        <td>{{ x.id }}</td>
-        <td>{{ x.data.name }}</td>
-        <td>{{ x.data.interest }}</td>
-      </tr>
-    </table>
+          <br>
+          
+          <div class="button-group">
+            <button type="button" class="btn btn-primary" ng-click="getUsers()">Get Users</button>
+          </div>
 
+          <br>
+
+          <div class="table-group">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Interests</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="x in myData">
+                  <td>{{ x.id }}</td>
+                  <td>{{ x.data.name }}</td>
+                  <td>{{ x.data.interests }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </form>
+      </div>
+    </div>
   </div>
 
   <script>
   var app = angular.module('myApp', []);
-  app.controller('myCtrl', function($scope, $http) {
-    $scope.ButtonClick = function () {
-      $http.get("https://shared-server.herokuapp.com/users")
+  app.controller('formCtrl', function($scope, $http) {
+    $scope.getUsers = function () {
+      $http.get("http://localhost:5000/users")
       .then(function(response) {
         $scope.myData = response.data;
       });
