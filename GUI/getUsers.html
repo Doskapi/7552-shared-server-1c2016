@@ -33,7 +33,7 @@ table tr:nth-child(even) {
   var app = angular.module('myApp', []);
   app.controller('myCtrl', function($scope, $http) {
     $scope.ButtonClick = function () {
-      $http.get("http://localhost:5000/users")
+      $http.get("https://shared-server.herokuapp.com/users")
       .then(function(response) {
         $scope.myData = response.data;
       });

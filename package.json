@@ -21,6 +21,7 @@
   "homepage": "https://github.com/fmesteban/7552-shared-server-1c2016#readme",
   "dependencies": {
     "body-parser": "^1.15.0",
+    "bootstrap": "^3.3.6",
     "express": "^4.13.4",
     "pg": "^4.5.1"
   }

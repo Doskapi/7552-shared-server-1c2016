@@ -2,6 +2,24 @@ var express = require('express');
 var router = express.Router();
 var pg = require('pg');
 var connectionString = "postgres://cwgmtezfmjyhao:b2edZkeC-qOcBcCHve8lXbKjeH@ec2-50-16-238-141.compute-1.amazonaws.com:5432/dbcqo9cuetdea3?ssl=true";
+var QueryHelper = require('../helpers/queryHelper');
+var Query = require('./query');
+
+//Create table interests
+router.get('/create/interests', function(req, res) {
+  var client = new pg.Client(connectionString);
+  client.connect();
+  var query = client.query('CREATE TABLE interests(id SERIAL PRIMARY KEY, category text, value text)');
+  query.on('end', function() { client.end(); });
+
+});
+
+router.get('/create/users', function(req, res) {
+  var client = new pg.Client(connectionString);
+  client.connect();
+  var query = client.query('CREATE TABLE users(id SERIAL PRIMARY KEY, data json)');
+  query.on('end', function() { client.end(); });
+});
 
 // Listado de usuarios
 router.get('/', function(req, res) {
@@ -37,13 +55,6 @@ router.get('/', function(req, res) {
 
 // Alta de usuario
 router.post('/', function(req, res) {
-
-  //TODO:: NO BORRAR CON ESTO CREO LA TABLA
-  // var client = new pg.Client(connectionString);
-  // client.connect();
-  // var query = client.query('CREATE TABLE users(id SERIAL PRIMARY KEY, data json)');
-  // query.on('end', function() { client.end(); });
-
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
 
@@ -55,15 +66,19 @@ router.post('/', function(req, res) {
     }
 
     // SQL Query > Insert Data
-    var query = client.query("INSERT INTO users(data) values($1) RETURNING id",[req.body.user],function(err, result) {
-      if (err) {
-        console.log(err);
-      } else {
-        req.body.user.id = result.rows[0].id;
-        console.log(req.body.user);
-        res.status(201).json(req.body.user);
-      }
-    });
+    // client.query("SELECT * FROM users WHERE alias="+req.body.user.alias,function(err,result){
+    //   if (err) {
+    //     console.log("ERROR");
+    //     console.log(err);
+    //   } else if(!QueryHelper.hasResult(result)){
+        if(QueryHelper.validatePersonalUserData(req.body.user)){
+          Query.checkInterests(req.body.user,client,res,req);
+        }
+      // }else{
+      //   res.status(201).json(req.body.user);
+      // }
+
+    // });
 
   });
 
@@ -160,6 +175,5 @@ router.delete('/[0-9]+', function(req, res) {
   });
 
 });
-
 
 module.exports = router;

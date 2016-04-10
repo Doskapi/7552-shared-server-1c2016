@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<body>
+  <div ng-app="myApp" ng-controller="formCtrl">
+    <form novalidate>
+      Interest Category:<br>
+      <input type="text" ng-model="interest.category"><br>
+      Interest Value:<br>
+      <input type="text" ng-model="interest.value"><br>
+      <br><br>
+      <button ng-click="addInterest()">Add Interest</button>
+    </form>
+  </div>
+
+  <script>
+  var app = angular.module('myApp', []);
+  app.controller('formCtrl', function($scope,$http) {
+    $scope.interest={'category':undefined,'value':undefined};
+    $scope.addInterest = function() {
+      $http({
+        url: 'http://localhost:5000/interests',
+        method: "POST",
+        data: { 'interest' : $scope.interest}
+      }).then(function(response) {
+        console.log(response.data);
+      },
+      function(response) { // optional
+        // failed
+      });
+    };
+  });
+  </script>
+
+</body>
+</html>

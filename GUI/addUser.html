@@ -11,11 +11,15 @@
       E-Mail:<br>
       <input type="email" ng-model="user.email"><br>
       Gender:<br>
-      <input type="text" ng-model="user.gender"><br>
-      Interest Band:<br>
-      <input type="text" ng-model="band.value"><br>
-      Interest Out:<br>
-      <input type="text" ng-model="out.value"><br>
+      <label class="radio-inline">
+        <input name="cssPre" id="css3" value="Male" class="active" type="radio" ng-model="user.gender">Male
+      </label>
+      <label class="radio-inline">
+        <input name="cssPre" id="css1" value="Female" type="radio" ng-model="user.gender">Female<br>
+      </label>
+      <!-- <input type="text" ng-model="user.gender"><br> -->
+      Interest Music:<br>
+      <input type="text" ng-model="music.value"><br>
       Latitude:<br>
       <input type="number" ng-model="user.location.latitude"><br>
       Longitud:<br>
@@ -28,14 +32,12 @@
   <script>
   var app = angular.module('myApp', []);
   app.controller('formCtrl', function($scope,$http) {
-    $scope.band={'category':'band','value':undefined};
-    $scope.out={'category':'out','value':undefined}
+    $scope.music={'category':'music','value':undefined};
     $scope.user = {};
-    $scope.user.interest = [];
+    $scope.user.interests = [];
     $scope.master = {};
-    $scope.logUser = function() {
-      if($scope.band.value !== undefined) $scope.user.interest.push($scope.band);
-      if($scope.out.value !== undefined) $scope.user.interest.push($scope.out);
+    $scope.addUser = function() {
+      if($scope.music.value !== undefined) $scope.user.interests.push($scope.music);
       $http({
         url: 'http://localhost:5000/users',
         method: "POST",
