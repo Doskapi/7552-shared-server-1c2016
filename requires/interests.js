@@ -38,4 +38,39 @@ router.post('/', function(req, res) {
 
 });
 
+// Listado de interests
+router.get('/', function(req, res) {
+
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      return res.status(500).json({ success: false, data: err});
+    }
+
+    // Obtengo todos las filas de ta tabla users, los usuarios
+    var query = client.query("SELECT * FROM interests ORDER BY id ASC");
+
+    // Agrego al array los usuarios, uno por uno
+    var results = [];
+    query.on('row', function(row) {
+      results.push(row);
+    });
+
+    // After all data is returned, close connection and return results
+    query.on('end', function() {
+      done();
+      return res.json(results);
+    });
+
+
+  });
+
+});
+
+
+
+
 module.exports = router;
