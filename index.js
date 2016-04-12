@@ -9,6 +9,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 var users = require('./requires/users');
 var interests = require('./requires/interests');
+var views = require('./requires/views');
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -19,6 +20,7 @@ app.use(function(req, res, next) {
 
 app.use('/users', users);
 app.use('/interests', interests);
+app.use('/', views);
 
 app.set('port', (process.env.PORT || 5000));
 

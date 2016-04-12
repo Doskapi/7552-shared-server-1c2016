@@ -6,16 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link href="css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="js/bootstrap.min.js"></script>
+
+  <!-- Angularjs -->
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="controller.js"></script>
+</head>
+
+<body>
+
   <div class="container">
     <div class="col-md-8">
-      <div ng-app="myApp" ng-controller="formCtrl">
+      <div ng-app="MagicMatch" ng-controller="Controller">
         <form>
           <div class="form-group">
             <label for="Name">Name</label>
@@ -48,10 +53,22 @@
 
           <br>
 
-          <label for="music">Interest Music</label>
           <div class="form-group">
-            <input type="text" class="form-control" id="exampleInputMusic" placeholder="Band/Artist" ng-model="music.value">
-          </div>
+      			<label for="ejemplo_intereses_1">Intereses</label>
+      			<p>Check your interests</p>
+      			<button type="button" class="btn btn-primary" ng-click="getAllInterests()"> Get All Interests</button>
+      			<form role="form">
+      				<ul>
+      					<li ng-repeat="checkBox in checkBoxes">
+      						<tt>{{checkBox.category}}
+      							{{"- " + checkBox.value + " "}} </tt>
+      							<input type="checkbox" name="checkbox" ng-model="checkBox.check">
+      							<br> <!-- Salto de linea final entre cada elemento del vector de usuarios-->
+      						</li>
+      						<br>
+      					</ul>
+      				</form>
+      			</div>
 
           <div class="form-group">
             <label for="latitude">Latitude</label>
@@ -71,29 +88,5 @@
       </div>
     </div>
   </div>
-  
-  <script>
-  var app = angular.module('myApp', []);
-  app.controller('formCtrl', function($scope,$http) {
-    $scope.music={'category':'music','value':undefined};
-    $scope.user = {};
-    $scope.user.interests = [];
-    $scope.master = {};
-    $scope.addUser = function() {
-      if($scope.music.value !== undefined) $scope.user.interests.push($scope.music);
-      $http({
-        url: 'http://localhost:5000/users',
-        method: "POST",
-        data: { 'user' : $scope.user}
-      }).then(function(response) {
-        console.log(response.data);
-      },
-      function(response) { // optional
-        // failed
-      });
-    };
-  });
-  </script>
-
 </body>
 </html>

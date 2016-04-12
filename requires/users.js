@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var pg = require('pg');
+var fs = require("fs");
 var connectionString = "postgres://cwgmtezfmjyhao:b2edZkeC-qOcBcCHve8lXbKjeH@ec2-50-16-238-141.compute-1.amazonaws.com:5432/dbcqo9cuetdea3?ssl=true";
 var QueryHelper = require('../helpers/queryHelper');
 var Query = require('./query');
@@ -55,6 +56,7 @@ router.get('/', function(req, res) {
 
 // Alta de usuario
 router.post('/', function(req, res) {
+  console.log(req.body.user);
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
 
@@ -174,6 +176,26 @@ router.delete('/[0-9]+', function(req, res) {
 
   });
 
+});
+
+// Actualizar foto de perfil de usuario
+router.put('/[0-9]+/photo', function(req, res) {
+  fs.readFile(req.files.image.path, function (err, data) {
+    var imageName = req.files.image.name;
+    // If there's an error
+    if(!imageName){
+      console.log("There was an error");
+      res.redirect("/");
+      res.end();
+    } else {
+      var newPath = __dirname + "/uploads/fullsize/" + imageName;
+      // write file to uploads/fullsize folder
+      fs.writeFile(newPath, data, function (err) {
+        // let's see it
+        res.redirect("/uploads/fullsize/" + imageName);
+      });
+    }
+  });
 });
 
 module.exports = router;

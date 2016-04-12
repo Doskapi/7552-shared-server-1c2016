@@ -10,49 +10,28 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="js/bootstrap.min.js"></script>
+
   <!-- Angularjs -->
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
   <script src="controller.js"></script>
 </head>
 
 <body>
-
   <div class="container">
     <div class="col-md-8">
       <div ng-app="MagicMatch" ng-controller="Controller">
         <form>
-
-          <br>
-
-          <div class="button-group">
-            <button type="button" class="btn btn-primary" ng-click="getUsers()">Get Users</button>
-          </div>
-
-          <br>
-
-          <div class="table-group">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Interests</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr ng-repeat="x in user">
-                  <td>{{ x.id }}</td>
-                  <td>{{ x.data.name }}</td>
-                  <td>{{ x.data.interests }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
+          <a href="getUsers.html" class="btn btn-info" role="button">Click to Get Users</a><br><br>
+          <a href="getUser.html" class="btn btn-info" role="button">Click to Get Specific User</a><br><br>
+          <a href="addUser.html" class="btn btn-info" role="button">Click to Add User</a><br><br>
+          <a href="modUser.html" class="btn btn-info" role="button">Click to Modify User</a><br><br>
+          <a href="deleteUser.html" class="btn btn-info" role="button">Click to Delete User</a><br><br>
+          <a href="getInterests.html" class="btn btn-info" role="button">Click to Get Interests</a><br><br>
+          <a href="addInterest.html" class="btn btn-info" role="button">Click to Add Interest</a><br><br>
         </form>
       </div>
     </div>
   </div>
-
 </body>
+
 </html>
