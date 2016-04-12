@@ -15,7 +15,6 @@ app.controller('Controller', function($scope,$http) {
       method: "POST",
       data: { 'user' : $scope.user}
     }).then(function(response) {
-      $scope.user.interests = [];
       console.log(response.data);
     },
     function(response) { // optional
@@ -28,12 +27,10 @@ app.controller('Controller', function($scope,$http) {
     $scope.checkBoxes = [];
     $http.get("/interests")
     .then(function(result){ /*Caso success*/
-      console.log(result.data);
       for(var i in result.data){
         data = {category: result.data[i].category, value: result.data[i].value, check: false};
         $scope.checkBoxes.push(data);
       }
-      console.log($scope.checkBoxes);
     });
   };
 
@@ -51,7 +48,13 @@ app.controller('Controller', function($scope,$http) {
   };
 
   $scope.getUser = function() {
-    $http.get('/users/'+$scope.ID).then(function(response) {
+    $http.get("/users/"+$scope.ID).then(function(response) {
+      $scope.user = response.data;
+    });
+  };
+
+  $scope.getUserToModify = function() {
+    $http.get("/users/"+$scope.ID).then(function(response) {
       $scope.user = response.data[0].data;
     });
   };
@@ -68,7 +71,6 @@ app.controller('Controller', function($scope,$http) {
     $scope.checkBoxes = [];
     $http.get("/interests")
     .then(function(result){ /*Caso success*/
-      console.log(result.data);
       for(var i in result.data){
         data = {category: result.data[i].category, value: result.data[i].value, check: false};
         for(var j in $scope.user.interests){
@@ -80,15 +82,15 @@ app.controller('Controller', function($scope,$http) {
         }
         $scope.checkBoxes.push(data);
       }
-      console.log($scope.checkBoxes);
-
     });
   };
 
   $scope.modUser = function() {
-    if($scope.music.value !== undefined) $scope.user.interests.push($scope.music);
+    $scope.user.interests = [];
+    for(var i in $scope.checkBoxes)
+      if($scope.checkBoxes[i].check) $scope.user.interests.push({'category':$scope.checkBoxes[i].category,'value':$scope.checkBoxes[i].value});
     $http({
-      url: '/users/'+$scope.id,
+      url: '/users/'+$scope.ID,
       method: "PUT",
       data: { 'user' : $scope.user}
     }).then(function(response) {
