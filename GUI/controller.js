@@ -11,7 +11,7 @@ app.controller('Controller', function($scope,$http) {
     for(var i in $scope.checkBoxes)
       if($scope.checkBoxes[i].check) $scope.user.interests.push({'category':$scope.checkBoxes[i].category,'value':$scope.checkBoxes[i].value});
     $http({
-      url: 'http://localhost:5000/users',
+      url: '/users',
       method: "POST",
       data: { 'user' : $scope.user}
     }).then(function(response) {
@@ -26,7 +26,7 @@ app.controller('Controller', function($scope,$http) {
   var data;
   $scope.getAllInterests = function(){
     $scope.checkBoxes = [];
-    $http.get("http://localhost:5000/interests")
+    $http.get("/interests")
     .then(function(result){ /*Caso success*/
       console.log(result.data);
       for(var i in result.data){
@@ -38,26 +38,26 @@ app.controller('Controller', function($scope,$http) {
   };
 
   $scope.deleteUser = function() {
-    $http.delete('http://localhost:5000/users/'+$scope.ID).then(function(response) {
+    $http.delete('/users/'+$scope.ID).then(function(response) {
       console.log(response);
     });
   };
 
   $scope.getInterestsForTable = function () {
-    $http.get("http://localhost:5000/interests")
+    $http.get("/interests")
     .then(function(response) {
       $scope.interests = response.data;
     });
   };
 
   $scope.getUser = function() {
-    $http.get('http://localhost:5000/users/'+$scope.ID).then(function(response) {
+    $http.get('/users/'+$scope.ID).then(function(response) {
       $scope.user = response.data[0].data;
     });
   };
 
   $scope.getUsers = function () {
-    $http.get("http://localhost:5000/users")
+    $http.get("/users")
     .then(function(response) {
       $scope.user = response.data;
     });
@@ -66,7 +66,7 @@ app.controller('Controller', function($scope,$http) {
   $scope.getAllInterestsAndMine = function(){
     if($scope.user.interests === undefined) return;
     $scope.checkBoxes = [];
-    $http.get("http://localhost:5000/interests")
+    $http.get("/interests")
     .then(function(result){ /*Caso success*/
       console.log(result.data);
       for(var i in result.data){
@@ -88,7 +88,7 @@ app.controller('Controller', function($scope,$http) {
   $scope.modUser = function() {
     if($scope.music.value !== undefined) $scope.user.interests.push($scope.music);
     $http({
-      url: 'http://localhost:5000/users/'+$scope.id,
+      url: '/users/'+$scope.id,
       method: "PUT",
       data: { 'user' : $scope.user}
     }).then(function(response) {
@@ -101,7 +101,7 @@ app.controller('Controller', function($scope,$http) {
 
   $scope.addInterest = function() {
     $http({
-      url: 'http://localhost:5000/interests',
+      url: '/interests',
       method: "POST",
       data: { 'interest' : $scope.interest}
     }).then(function(response) {
