@@ -1,5 +1,6 @@
 var CheckInterestCallback = require('../callbacks/checkInterestCallback');
-var AddUserCallback = require('../callbacks/addUserCallback');
+var PersistInterestCallback = require('../callbacks/persistInterestCallback');
+var ResponseCallback = require('../callbacks/responseCallback');
 var QueryHelper = require('../helpers/queryHelper');
 
 var Query = {};
@@ -32,18 +33,70 @@ Query.checkSpecificInterest = function(interest,client,res,callback){
   });
 };
 
-Query.addUser = function(user,client,res,req){
-  client.query("INSERT INTO users(data) values($1) RETURNING id",[user],function(err, result) {
+Query.persistUser = function(user,client,res){
+  user.photo = "no_photo";
+  client.query("INSERT INTO users(name,alias,sex,photo,email,location) values($1,$2,$3,$4,$5,$6) RETURNING id_user",[user.name,user.alias,user.sex,user.photo,user.email,user.location],function(err, result) {
     if (err) {
       console.log(err);
     } else {
-      req.body.user.id = result.rows[0].id;
-      res.status(201).json(req.body.user);
+      user.id = result.rows[0].id_user;
+      Query.persistInterestAndResponse(user,user.id,client,res);
     }
   });
 };
 
-Query.checkInterests = function(user,client,res,req){
+Query.persistInterest = function(interest,idUser,client,res,callback){
+  client.query("INSERT INTO users_interests(id_user,category,value) values($1,$2,$3)",[idUser,interest.category,interest.value],function(err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      callback.execute();
+    }
+  });
+};
+
+Query.responseUser = function(user,res){
+  res.status(201).json(user);
+};
+
+Query.persistInterestAndResponse = function(user,idUser,client,res){
+  var interests = user.interests;
+  var callbacks = [];
+  // console.log("ResolverDBPlayer:: playersInfoArena lenght: "+playersInfoArena.length);
+  for(var i in interests){
+    callbacks.push(new PersistInterestCallback(interests[i],idUser,client,res,Query.persistInterest));
+  }
+  for(i =0; i < callbacks.length-1;++i){
+    callbacks[i].setCallback(callbacks[i+1]);
+  }
+  // console.log("ResolverDBPlayer:: callbacks lenght: "+callbacks.length);
+  callbacks[callbacks.length-1].setCallback(new ResponseCallback(user,res,Query.responseUser));
+  callbacks[0].execute();
+};
+
+Query.deleteInterestsAndResponse = function(user,idUser,client,res){
+  client.query("DELETE FROM users_interests WHERE id_user="+idUser,function(err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      Query.persistInterestAndResponse(user,idUser,client,res);
+    }
+  });
+};
+
+Query.modifyUser = function(user,idUser,client,res){
+  console.log("PASO MODIFY");
+  client.query("UPDATE users SET name=($1), alias=($2) WHERE id_user=($3)", [user.name,user.alias, idUser],function(err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("MODIFICO");
+      Query.deleteInterestsAndResponse(user,idUser,client,res);
+    }
+  });
+};
+
+Query.checkInterests = function(user,client,res,next){
   var interests = user.interests;
   var callbacks = [];
   // console.log("ResolverDBPlayer:: playersInfoArena lenght: "+playersInfoArena.length);
@@ -54,7 +107,7 @@ Query.checkInterests = function(user,client,res,req){
     callbacks[i].setCallback(callbacks[i+1]);
   }
   // console.log("ResolverDBPlayer:: callbacks lenght: "+callbacks.length);
-  callbacks[callbacks.length-1].setCallback(new AddUserCallback(user,client,res,req,Query.addUser));
+  callbacks[callbacks.length-1].setCallback(next);
   callbacks[0].execute();
 };
 

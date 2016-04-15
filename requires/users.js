@@ -5,12 +5,22 @@ var fs = require("fs");
 var connectionString = "postgres://cwgmtezfmjyhao:b2edZkeC-qOcBcCHve8lXbKjeH@ec2-50-16-238-141.compute-1.amazonaws.com:5432/dbcqo9cuetdea3?ssl=true";
 var QueryHelper = require('../helpers/queryHelper');
 var Query = require('./query');
+var ModifyUserCallback = require("../callbacks/modifyUserCallback");
+var PersistUserCallback = require("../callbacks/persistUserCallback");
 
 //Create table interests
 router.get('/create/interests', function(req, res) {
   var client = new pg.Client(connectionString);
   client.connect();
-  var query = client.query('CREATE TABLE interests(id SERIAL PRIMARY KEY, category text, value text)');
+  var query = client.query('CREATE TABLE interests(id_interest SERIAL PRIMARY KEY, category text, value text)');
+  query.on('end', function() { client.end(); });
+
+});
+
+router.get('/create/users_interests', function(req, res) {
+  var client = new pg.Client(connectionString);
+  client.connect();
+  var query = client.query('CREATE TABLE users_interests(id SERIAL PRIMARY KEY,id_user integer,category text, value text)');
   query.on('end', function() { client.end(); });
 
 });
@@ -18,7 +28,7 @@ router.get('/create/interests', function(req, res) {
 router.get('/create/users', function(req, res) {
   var client = new pg.Client(connectionString);
   client.connect();
-  var query = client.query('CREATE TABLE users(id SERIAL PRIMARY KEY, data json)');
+  var query = client.query('CREATE TABLE users(id_user SERIAL PRIMARY KEY, name text, alias text, sex text, photo text, email text,location json)');
   query.on('end', function() { client.end(); });
 });
 
@@ -27,20 +37,31 @@ router.get('/', function(req, res) {
 
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
+
     // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err});
-    }
+    QueryHelper.controlError(err,res);
 
     // Obtengo todos las filas de ta tabla users, los usuarios
-    var query = client.query("SELECT * FROM users ORDER BY id ASC");
+    var query = client.query("SELECT * FROM users INNER JOIN users_interests ON (users.id_user = users_interests.id_user) ORDER BY id ASC");
 
     // Agrego al array los usuarios, uno por uno
-    var results = [];
+    var results = {users:[]};
+    var user;
+    var idUser;
     query.on('row', function(row) {
-      results.push(row);
+      if(idUser != row.id_user){
+        idUser = row.id_user;
+        user = {user: {id: undefined,name: undefined,alias:undefined,email:undefined,photo:undefined,sex:undefined,interests:[]}};
+        user.user.id=row.id_user;
+        user.user.name = row.name;
+        user.user.alias = row.alias;
+        user.user.email = row.email;
+        user.user.sex = row.sex;
+        user.user.photo = row.photo;
+        user.user.location = row.location;
+        user.user.interests.push({category:row.category,value:row.value});
+        results.users.push(user);
+      }else user.user.interests.push({category:row.category,value:row.value});
     });
 
     // After all data is returned, close connection and return results
@@ -56,31 +77,29 @@ router.get('/', function(req, res) {
 
 // Alta de usuario
 router.post('/', function(req, res) {
-  console.log(req.body.user);
+
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
 
     // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err});
-    }
+    QueryHelper.controlError(err,res);
 
     // SQL Query > Insert Data
-    // client.query("SELECT * FROM users WHERE alias="+req.body.user.alias,function(err,result){
-    //   if (err) {
-    //     console.log("ERROR");
-    //     console.log(err);
-    //   } else if(!QueryHelper.hasResult(result)){
+    client.query("SELECT * FROM users WHERE email LIKE '%"+req.body.user.email+"%'",function(err,result){
+      if (err) {
+        console.log("ERROR");
+        console.log(err);
+      } else if(!QueryHelper.hasResult(result)){
         if(QueryHelper.validatePersonalUserData(req.body.user)){
-          Query.checkInterests(req.body.user,client,res,req);
+          //CHEQUEO INTERESES Y LUEGO PERSISTO
+          Query.checkInterests(req.body.user,client,res,new PersistUserCallback(req.body.user,client,res,Query.persistUser));
         }
-      // }else{
-      //   res.status(201).json(req.body.user);
-      // }
+      }else{
+        //TODO::ACLARAR CON EZE QUE DEVOLVERLE SI YA EXISTE ESE MAIL
+        res.status(201).json(req.body.user);
+      }
 
-    // });
+    });
 
   });
 
@@ -94,25 +113,33 @@ router.get('/[0-9]+', function(req, res) {
 
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
+
     // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err});
-    }
+    QueryHelper.controlError(err,res);
+
     // Obtengo todos las filas de ta tabla users, los usuarios
-    var query = client.query("SELECT * FROM users WHERE id ="+id);
+    var query = client.query("SELECT * FROM users INNER JOIN users_interests ON (users.id_user = users_interests.id_user) WHERE users.id_user ="+id);
 
     // Agrego al array los usuarios, uno por uno
-    var results = [];
+    var user = {user: {id: undefined,name: undefined,alias:undefined,email:undefined,photo:undefined,sex:undefined,interests:[]}};
+
     query.on('row', function(row) {
-      results.push(row);
+      if(user.user.id === undefined){
+        user.user.id=row.id_user;
+        user.user.name = row.name;
+        user.user.alias = row.alias;
+        user.user.email = row.email;
+        user.user.sex = row.sex;
+        user.user.photo = row.photo;
+        user.user.location = row.location;
+      }
+      user.user.interests.push({category:row.category,value:row.value});
     });
 
     // After all data is returned, close connection and return results
     query.on('end', function() {
       done();
-      return res.json(results);
+      return res.json(user);
     });
 
 
@@ -122,7 +149,7 @@ router.get('/[0-9]+', function(req, res) {
 
 // Modificacion de usuario
 router.put('/[0-9]+', function(req, res) {
-
+  console.log("paso");
   //Obtengo id de la ruta
   var id = req.url.substring(1);
 
@@ -130,21 +157,22 @@ router.put('/[0-9]+', function(req, res) {
   pg.connect(connectionString, function(err, client, done) {
 
     // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err});
-    }
+    QueryHelper.controlError(err,res);
 
     // SQL Query > Insert Data
-    client.query("UPDATE users SET data=($1) WHERE id=($2)", [req.body.user, id],function(err, result) {
+    client.query("SELECT * FROM users WHERE id_user ="+id,function(err,result){
       if (err) {
         console.log(err);
-      } else {
-        res.status(200);
+      } else if(QueryHelper.hasResult(result)){
+        if(QueryHelper.validatePersonalUserData(req.body.user)){
+          //CHEQUEO INTERESES Y LUEGO PERSISTO
+          Query.checkInterests(req.body.user,client,res,new ModifyUserCallback(req.body.user,id,client,res,Query.modifyUser));
+        }
+      }else{
+        //TODO:: VER QUE SE ENVIA DE ERROR
+        res.status(500).json({ success: false, data: err});
       }
     });
-
   });
 
 });
@@ -159,20 +187,10 @@ router.delete('/[0-9]+', function(req, res) {
   pg.connect(connectionString, function(err, client, done) {
 
     // Handle connection errors
-    if(err) {
-      done();
-      console.log(err);
-      return res.status(500).json({ success: false, data: err});
-    }
+    QueryHelper.controlError(err,res);
 
     // SQL Query > Delete user
-    client.query("DELETE FROM users WHERE id=($1)", [id],function(err, result) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.status(200);
-      }
-    });
+    QueryHelper.deleteUser(client,id,res);
 
   });
 

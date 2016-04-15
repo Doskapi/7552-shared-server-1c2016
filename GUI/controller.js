@@ -49,20 +49,22 @@ app.controller('Controller', function($scope,$http) {
 
   $scope.getUser = function() {
     $http.get("/users/"+$scope.ID).then(function(response) {
-      $scope.user = response.data;
+      $scope.user = [response.data.user];
     });
   };
 
   $scope.getUserToModify = function() {
     $http.get("/users/"+$scope.ID).then(function(response) {
-      $scope.user = response.data[0].data;
+      console.log(response.data.user);
+      $scope.user = response.data.user;
     });
   };
 
   $scope.getUsers = function () {
     $http.get("/users")
     .then(function(response) {
-      $scope.user = response.data;
+      console.log(response.data);
+      $scope.user = response.data.users;
     });
   };
 
