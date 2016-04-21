@@ -20,7 +20,7 @@ router.get('/create/interests', function(req, res) {
 router.get('/create/users_interests', function(req, res) {
   var client = new pg.Client(connectionString);
   client.connect();
-  var query = client.query('CREATE TABLE users_interests(id SERIAL PRIMARY KEY,id_user integer,category text, value text)');
+  var query = client.query('CREATE TABLE users_interests(id SERIAL PRIMARY KEY,id_user integer REFERENCES users(id_user) ON DELETE CASCADE,category text, value text)');
   query.on('end', function() { client.end(); });
 
 });
@@ -49,6 +49,7 @@ router.get('/', function(req, res) {
     var user;
     var idUser;
     query.on('row', function(row) {
+      console.log(row);
       if(idUser != row.id_user){
         idUser = row.id_user;
         user = {user: {id: undefined,name: undefined,alias:undefined,email:undefined,photo:undefined,sex:undefined,interests:[]}};
@@ -67,6 +68,7 @@ router.get('/', function(req, res) {
     // After all data is returned, close connection and return results
     query.on('end', function() {
       done();
+      console.log(results);
       return res.json(results);
     });
 
@@ -77,6 +79,9 @@ router.get('/', function(req, res) {
 
 // Alta de usuario
 router.post('/', function(req, res) {
+
+  console.log("LLEGOOOO");
+  console.log(req.body);
 
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
