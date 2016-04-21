@@ -1,7 +1,12 @@
 var CheckInterestCallback = require('../callbacks/checkInterestCallback');
 var PersistInterestCallback = require('../callbacks/persistInterestCallback');
 var ResponseCallback = require('../callbacks/responseCallback');
+var ModifyUserCallback = require("../callbacks/modifyUserCallback");
+var PersistUserCallback = require("../callbacks/persistUserCallback");
+
 var QueryHelper = require('../helpers/queryHelper');
+var pg = require('pg');
+var connectionString = "postgres://cwgmtezfmjyhao:b2edZkeC-qOcBcCHve8lXbKjeH@ec2-50-16-238-141.compute-1.amazonaws.com:5432/dbcqo9cuetdea3?ssl=true";
 
 var Query = {};
 
@@ -84,13 +89,11 @@ Query.deleteInterestsAndResponse = function(user,idUser,client,res){
   });
 };
 
-Query.modifyUser = function(user,idUser,client,res){
-  console.log("PASO MODIFY");
+Query.modifyUserAndResponse = function(user,idUser,client,res){
   client.query("UPDATE users SET name=($1), alias=($2) WHERE id_user=($3)", [user.name,user.alias, idUser],function(err, result) {
     if (err) {
       console.log(err);
     } else {
-      console.log("MODIFICO");
       Query.deleteInterestsAndResponse(user,idUser,client,res);
     }
   });
@@ -109,6 +112,184 @@ Query.checkInterests = function(user,client,res,next){
   // console.log("ResolverDBPlayer:: callbacks lenght: "+callbacks.length);
   callbacks[callbacks.length-1].setCallback(next);
   callbacks[0].execute();
+};
+
+
+
+
+Query.deleteUser = function(client,done,req,res){
+
+  //Obtengo id de la ruta
+  var id = req.url.substring(1);
+
+  // SQL Query > Delete user
+  client.query("DELETE FROM users WHERE id_user="+id,function(err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.status(200);
+    }
+  });
+
+};
+
+Query.addUser = function(client,done,req,res){
+
+  // SQL Query > Insert Data
+  client.query("SELECT * FROM users WHERE email LIKE '%"+req.body.user.email+"%'",function(err,result){
+    if (err) {
+      console.log("ERROR");
+      console.log(err);
+    } else if(!QueryHelper.hasResult(result)){
+      if(QueryHelper.validatePersonalUserData(req.body.user)){
+        //CHEQUEO INTERESES Y LUEGO PERSISTO
+        Query.checkInterests(req.body.user,client,res,new PersistUserCallback(req.body.user,client,res,Query.persistUser));
+      }
+    }else{
+      //TODO::ACLARAR CON EZE QUE DEVOLVERLE SI YA EXISTE ESE MAIL
+      res.status(201).json(req.body.user);
+    }
+
+  });
+
+};
+
+Query.getUsers = function(client,done,req,res){
+  // Obtengo todos las filas de ta tabla users, los usuarios
+  var query = client.query("SELECT * FROM users INNER JOIN users_interests ON (users.id_user = users_interests.id_user) ORDER BY id ASC");
+
+  // Agrego al array los usuarios, uno por uno
+  var results = {users:[]};
+  var user;
+  var idUser;
+  query.on('row', function(row) {
+    if(idUser != row.id_user){
+      idUser = row.id_user;
+      user = {user: {id: undefined,name: undefined,alias:undefined,email:undefined,photo:undefined,sex:undefined,interests:[]}};
+      user.user.id=row.id_user;
+      user.user.name = row.name;
+      user.user.alias = row.alias;
+      user.user.email = row.email;
+      user.user.sex = row.sex;
+      user.user.photo = row.photo;
+      user.user.location = row.location;
+      user.user.interests.push({category:row.category,value:row.value});
+      results.users.push(user);
+    }else user.user.interests.push({category:row.category,value:row.value});
+  });
+
+  // After all data is returned, close connection and return results
+  query.on('end', function() {
+    done();
+    return res.json(results);
+  });
+};
+
+Query.getSpecificUser = function(client,done,req,res){
+
+  // console.log(client);
+  // //Obtengo id de la ruta
+  var id = req.url.substring(1);
+
+  // Obtengo todos las filas de ta tabla users, los usuarios
+  var query = client.query("SELECT * FROM users INNER JOIN users_interests ON (users.id_user = users_interests.id_user) WHERE users.id_user ="+id);
+
+  // Agrego al array los usuarios, uno por uno
+  var user = {user: {id: undefined,name: undefined,alias:undefined,email:undefined,photo:undefined,sex:undefined,interests:[]}};
+
+  query.on('row', function(row) {
+    if(user.user.id === undefined){
+      user.user.id=row.id_user;
+      user.user.name = row.name;
+      user.user.alias = row.alias;
+      user.user.email = row.email;
+      user.user.sex = row.sex;
+      user.user.photo = row.photo;
+      user.user.location = row.location;
+    }
+    user.user.interests.push({category:row.category,value:row.value});
+  });
+
+  // After all data is returned, close connection and return results
+  query.on('end', function() {
+    done();
+    return res.json(user);
+  });
+
+};
+
+Query.modifyUser = function(client,done,req,res){
+
+  //Obtengo id de la ruta
+  var id = req.url.substring(1);
+
+  // SQL Query > Insert Data
+  var query = client.query("SELECT * FROM users WHERE id_user ="+id,function(err,result){
+    if (err) {
+      console.log(err);
+    } else if(QueryHelper.hasResult(result)){
+      if(QueryHelper.validatePersonalUserData(req.body.user)){
+        //CHEQUEO INTERESES Y LUEGO PERSISTO
+        Query.checkInterests(req.body.user,client,res,new ModifyUserCallback(req.body.user,id,client,res,Query.modifyUserAndResponse));
+      }
+    }else{
+      //TODO:: VER QUE SE ENVIA DE ERROR
+      res.status(500).json({ success: false, data: err});
+    }
+
+  });
+
+};
+
+Query.addInterest = function(client,done,req,res){
+  var interest = req.body.interest;
+  client.query("SELECT * FROM interests WHERE category=($1) AND value=($2)",[interest.category,interest.value],function(err, result) {
+    if (err) {
+      console.log(err);
+      //Contiene la categoria y valor
+    }else if(QueryHelper.hasResult(result)){
+      //TODO:: INFORMARLE QUE EL INTEREST EXISTE
+    }else{
+      client.query("INSERT INTO interests(category,value) values($1,$2)",[interest.category,interest.value],function(err, result) {
+        if (err) {
+          console.log(err);
+        }else{
+            //TODO:: INFORMARLE QUE EL INTEREST FUE AGREGADO
+        }
+      });
+    }
+  });
+};
+
+Query.getInterests = function(client,done,req,res){
+  // Obtengo todos las filas de ta tabla users, los usuarios
+  var query = client.query("SELECT * FROM interests ORDER BY id ASC");
+
+  // Agrego al array los usuarios, uno por uno
+  var results = [];
+  query.on('row', function(row) {
+    results.push(row);
+  });
+
+  // After all data is returned, close connection and return results
+  query.on('end', function() {
+    done();
+    return res.json(results);
+  });
+};
+
+Query.processQuery = function(req,res,resolver){
+  // Get a Postgres client from the connection pool
+  pg.connect(connectionString, function(err, client, done) {
+
+    // Handle connection errors
+    QueryHelper.controlError(err,res);
+
+    resolver.setClientAndDone(client,done);
+
+    resolver.execute();
+  });
+  
 };
 
 module.exports = Query;
