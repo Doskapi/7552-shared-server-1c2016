@@ -34,7 +34,6 @@ router.get('/create/users', function(req, res) {
 
 // Listado de usuarios
 router.get('/', function(req, res) {
-
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
 
@@ -82,6 +81,7 @@ router.post('/', function(req, res) {
 
   console.log("LLEGOOOO");
   console.log(req.body);
+  console.log(req.headers);
 
   // Get a Postgres client from the connection pool
   pg.connect(connectionString, function(err, client, done) {
