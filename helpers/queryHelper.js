@@ -10,16 +10,12 @@ QueryHelper.hasResult = function(result){
 };
 
 QueryHelper.validatePersonalUserData = function(user){
-  return (user.name !== undefined && user.alias !== undefined &&
-    user.email !== undefined && user.interests !== undefined && user.location !== undefined);
+  return (user.name !== undefined && user.alias !== undefined && user.email !== undefined && user.interests !== undefined && user.location !== undefined);
 };
 
-QueryHelper.controlError = function(err,res){
-  if(err) {
-    done();
-    console.log(err);
-    return res.status(500).json({ success: false, data: err});
-  }
+QueryHelper.sendError = function(err,res,done,status){
+  done();
+  return res.status(status).json({ success: false, data: err});
 };
 
 QueryHelper.createUsersTable = function(req,res){

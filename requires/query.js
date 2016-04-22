@@ -10,106 +10,81 @@ var connectionString = "postgres://cwgmtezfmjyhao:b2edZkeC-qOcBcCHve8lXbKjeH@ec2
 
 var Query = {};
 
-Query.checkSpecificInterest = function(interest,client,res,callback){
+Query.checkSpecificInterest = function(interest,client,res,done,callback){
   client.query("SELECT * FROM interests WHERE category  LIKE '%"+interest.category+"%'",function(err, result) {
-    if (err) {
-      console.log(err);
-      //Contiene la categoria
-    } else if(QueryHelper.hasResult(result)){
-      client.query("SELECT value FROM interests WHERE category = ($1) AND value = ($2)",[interest.category,interest.value],function(err, result) {
-        if (err) {
-          console.log(err);
-          //Contiene la categoria y valor
-        }else if(QueryHelper.hasResult(result)){
-          callback.execute();
-          //Contiene la categoria pero no el valor
-        }else{
-          client.query("INSERT INTO interests(category,value) values($1,$2)",[interest.category,interest.value],function(err, result) {
-            if (err) {
-              console.log(err);
-            }else callback.execute();
-          });
-        }
-      });
-      //No contiene la categoria
-    }else{
-      res.status(404);
-    }
+    if(err) return QueryHelper.sendError(err,res,done,500);
+    if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,500);
+
+    client.query("SELECT value FROM interests WHERE category = ($1) AND value = ($2)",[interest.category,interest.value],function(err, result) {
+      if(err) return QueryHelper.sendError(err,res,done,500);
+      if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,500);
+      callback.execute();
+    });
   });
 };
 
-Query.persistUser = function(user,client,res){
+Query.persistUser = function(user,client,res,done){
   user.photo = "no_photo";
   client.query("INSERT INTO users(name,alias,sex,photo,email,location) values($1,$2,$3,$4,$5,$6) RETURNING id_user",[user.name,user.alias,user.sex,user.photo,user.email,user.location],function(err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      user.id = result.rows[0].id_user;
-      Query.persistInterestAndResponse(user,user.id,client,res);
-    }
+    if(err) return QueryHelper.sendError(err,res,done,500);
+    user.id = result.rows[0].id_user;
+    Query.persistInterestAndResponse(user,user.id,client,res,done);
   });
 };
 
-Query.persistInterest = function(interest,idUser,client,res,callback){
+Query.persistInterest = function(interest,idUser,client,res,done,callback){
   client.query("INSERT INTO users_interests(id_user,category,value) values($1,$2,$3)",[idUser,interest.category,interest.value],function(err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      callback.execute();
-    }
+    if(err) return QueryHelper.sendError(err,res,done,500);
+    callback.execute();
   });
 };
 
-Query.responseUser = function(user,res){
-  res.status(201).json(user);
+Query.responseUser = function(user,res,done){
+  done();
+  return res.status(201).json(user);
 };
 
-Query.persistInterestAndResponse = function(user,idUser,client,res){
+Query.persistInterestAndResponse = function(user,idUser,client,res,done){
   var interests = user.interests;
   var callbacks = [];
-  // console.log("ResolverDBPlayer:: playersInfoArena lenght: "+playersInfoArena.length);
+
   for(var i in interests){
-    callbacks.push(new PersistInterestCallback(interests[i],idUser,client,res,Query.persistInterest));
+    callbacks.push(new PersistInterestCallback(interests[i],idUser,client,res,done,Query.persistInterest));
   }
   for(i =0; i < callbacks.length-1;++i){
     callbacks[i].setCallback(callbacks[i+1]);
   }
-  // console.log("ResolverDBPlayer:: callbacks lenght: "+callbacks.length);
-  callbacks[callbacks.length-1].setCallback(new ResponseCallback(user,res,Query.responseUser));
+
+  callbacks[callbacks.length-1].setCallback(new ResponseCallback(user,res,done,Query.responseUser));
   callbacks[0].execute();
 };
 
-Query.deleteInterestsAndResponse = function(user,idUser,client,res){
+Query.deleteInterestsAndResponse = function(user,idUser,client,res,done){
   client.query("DELETE FROM users_interests WHERE id_user="+idUser,function(err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      Query.persistInterestAndResponse(user,idUser,client,res);
-    }
+    if(err) return QueryHelper.sendError(err,res,done,500);
+    Query.persistInterestAndResponse(user,idUser,client,res,done);
   });
 };
 
-Query.modifyUserAndResponse = function(user,idUser,client,res){
+Query.modifyUserAndResponse = function(user,idUser,client,res,done){
   client.query("UPDATE users SET name=($1), alias=($2) WHERE id_user=($3)", [user.name,user.alias, idUser],function(err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      Query.deleteInterestsAndResponse(user,idUser,client,res);
-    }
+    if(err) return QueryHelper.sendError(err,res,done,500);
+    Query.deleteInterestsAndResponse(user,idUser,client,res,done);
   });
 };
 
-Query.checkInterests = function(user,client,res,next){
+Query.checkInterests = function(user,client,res,done,next){
   var interests = user.interests;
   var callbacks = [];
-  // console.log("ResolverDBPlayer:: playersInfoArena lenght: "+playersInfoArena.length);
+
   for(var i in interests){
-    callbacks.push(new CheckInterestCallback(interests[i],client,res,Query.checkSpecificInterest));
+    callbacks.push(new CheckInterestCallback(interests[i],client,res,done,Query.checkSpecificInterest));
   }
+
   for(i =0; i < callbacks.length-1;++i){
     callbacks[i].setCallback(callbacks[i+1]);
   }
-  // console.log("ResolverDBPlayer:: callbacks lenght: "+callbacks.length);
+
   callbacks[callbacks.length-1].setCallback(next);
   callbacks[0].execute();
 };
@@ -124,11 +99,10 @@ Query.deleteUser = function(client,done,req,res){
 
   // SQL Query > Delete user
   client.query("DELETE FROM users WHERE id_user="+id,function(err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.status(200);
-    }
+    if(err) return QueryHelper.sendError(err,res,done,500);
+    done();
+    //TODO:: VER QUE SE DEVUELVE EN EL DELETE
+    return res.status(200);
   });
 
 };
@@ -137,24 +111,18 @@ Query.addUser = function(client,done,req,res){
 
   // SQL Query > Insert Data
   client.query("SELECT * FROM users WHERE email LIKE '%"+req.body.user.email+"%'",function(err,result){
-    if (err) {
-      console.log("ERROR");
-      console.log(err);
-    } else if(!QueryHelper.hasResult(result)){
-      if(QueryHelper.validatePersonalUserData(req.body.user)){
-        //CHEQUEO INTERESES Y LUEGO PERSISTO
-        Query.checkInterests(req.body.user,client,res,new PersistUserCallback(req.body.user,client,res,Query.persistUser));
-      }
-    }else{
-      //TODO::ACLARAR CON EZE QUE DEVOLVERLE SI YA EXISTE ESE MAIL
-      res.status(201).json(req.body.user);
-    }
-
+    if(err) return QueryHelper.sendError(err,res,done,500);
+    if(QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,500);
+    //TODO:: VER QUE DEVUELVO SI HAY UN CAMPO INVALIDO
+    if(!QueryHelper.validatePersonalUserData(req.body.user)) return QueryHelper.sendError(err,res,done,500);
+    //CHEQUEO INTERESES Y LUEGO PERSISTO
+    Query.checkInterests(req.body.user,client,res,done,new PersistUserCallback(req.body.user,client,res,done,Query.persistUser));
   });
 
 };
 
 Query.getUsers = function(client,done,req,res){
+
   // Obtengo todos las filas de ta tabla users, los usuarios
   var query = client.query("SELECT * FROM users INNER JOIN users_interests ON (users.id_user = users_interests.id_user) ORDER BY id ASC");
 
@@ -187,7 +155,6 @@ Query.getUsers = function(client,done,req,res){
 
 Query.getSpecificUser = function(client,done,req,res){
 
-  // console.log(client);
   // //Obtengo id de la ruta
   var id = req.url.substring(1);
 
@@ -225,39 +192,29 @@ Query.modifyUser = function(client,done,req,res){
 
   // SQL Query > Insert Data
   var query = client.query("SELECT * FROM users WHERE id_user ="+id,function(err,result){
-    if (err) {
-      console.log(err);
-    } else if(QueryHelper.hasResult(result)){
-      if(QueryHelper.validatePersonalUserData(req.body.user)){
-        //CHEQUEO INTERESES Y LUEGO PERSISTO
-        Query.checkInterests(req.body.user,client,res,new ModifyUserCallback(req.body.user,id,client,res,Query.modifyUserAndResponse));
-      }
-    }else{
-      //TODO:: VER QUE SE ENVIA DE ERROR
-      res.status(500).json({ success: false, data: err});
-    }
-
+    if(err) return QueryHelper.sendError(err,res,done,500);
+    if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,500);
+    //TODO:: VER QUE DEVUELVO SI HAY UN CAMPO INVALIDO
+    if(!QueryHelper.validatePersonalUserData(req.body.user)) return QueryHelper.sendError(err,res,done,500);
+    //CHEQUEO INTERESES Y LUEGO PERSISTO
+    Query.checkInterests(req.body.user,client,res,done,new ModifyUserCallback(req.body.user,id,client,res,done,Query.modifyUserAndResponse));
   });
 
 };
 
 Query.addInterest = function(client,done,req,res){
   var interest = req.body.interest;
+
   client.query("SELECT * FROM interests WHERE category=($1) AND value=($2)",[interest.category,interest.value],function(err, result) {
-    if (err) {
-      console.log(err);
-      //Contiene la categoria y valor
-    }else if(QueryHelper.hasResult(result)){
-      //TODO:: INFORMARLE QUE EL INTEREST EXISTE
-    }else{
-      client.query("INSERT INTO interests(category,value) values($1,$2)",[interest.category,interest.value],function(err, result) {
-        if (err) {
-          console.log(err);
-        }else{
-            //TODO:: INFORMARLE QUE EL INTEREST FUE AGREGADO
-        }
-      });
-    }
+    if(err) return QueryHelper.sendError(err,res,done,500);
+    //TODO::VER QUE ENVIO SI YA EXISTE EL INTERES
+    if(QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,500);
+
+    client.query("INSERT INTO interests(category,value) values($1,$2)",[interest.category,interest.value],function(err, result) {
+      if(err) return QueryHelper.sendError(err,res,done,500);
+      done();
+      //TODO:: VER QUE LE ENVIO CUANDO AGREGO SATISFACTORIAMENTE EL NUEVO INTERES
+    });
   });
 };
 
@@ -283,13 +240,13 @@ Query.processQuery = function(req,res,resolver){
   pg.connect(connectionString, function(err, client, done) {
 
     // Handle connection errors
-    QueryHelper.controlError(err,res);
+    if(err) QueryHelper.sendError(err,res,done,500);
 
     resolver.setClientAndDone(client,done);
 
     resolver.execute();
   });
-  
+
 };
 
 module.exports = Query;
