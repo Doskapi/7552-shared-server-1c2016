@@ -109,14 +109,19 @@ Query.deleteUser = function(client,done,req,res){
 
 Query.addUser = function(client,done,req,res){
 
+  console.log(req.body);
+  var user = JSON.parse(req.body).user;
+
+  // console.log(user);
+
   // SQL Query > Insert Data
-  client.query("SELECT * FROM users WHERE email LIKE '%"+req.body.user.email+"%'",function(err,result){
+  client.query("SELECT * FROM users WHERE email LIKE '%"+user.email+"%'",function(err,result){
     if(err) return QueryHelper.sendError(err,res,done,500);
     if(QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,500);
     //TODO:: VER QUE DEVUELVO SI HAY UN CAMPO INVALIDO
-    if(!QueryHelper.validatePersonalUserData(req.body.user)) return QueryHelper.sendError(err,res,done,500);
+    if(!QueryHelper.validatePersonalUserData(user)) return QueryHelper.sendError(err,res,done,500);
     //CHEQUEO INTERESES Y LUEGO PERSISTO
-    Query.checkInterests(req.body.user,client,res,done,new PersistUserCallback(req.body.user,client,res,done,Query.persistUser));
+    Query.checkInterests(user,client,res,done,new PersistUserCallback(user,client,res,done,Query.persistUser));
   });
 
 };
@@ -190,20 +195,26 @@ Query.modifyUser = function(client,done,req,res){
   //Obtengo id de la ruta
   var id = req.url.substring(1);
 
+  var user = JSON.parse(req.body).user;
+
+  console.log(user);
+
   // SQL Query > Insert Data
   var query = client.query("SELECT * FROM users WHERE id_user ="+id,function(err,result){
     if(err) return QueryHelper.sendError(err,res,done,500);
     if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,500);
     //TODO:: VER QUE DEVUELVO SI HAY UN CAMPO INVALIDO
-    if(!QueryHelper.validatePersonalUserData(req.body.user)) return QueryHelper.sendError(err,res,done,500);
+    if(!QueryHelper.validatePersonalUserData(user)) return QueryHelper.sendError(err,res,done,500);
     //CHEQUEO INTERESES Y LUEGO PERSISTO
-    Query.checkInterests(req.body.user,client,res,done,new ModifyUserCallback(req.body.user,id,client,res,done,Query.modifyUserAndResponse));
+    Query.checkInterests(user,client,res,done,new ModifyUserCallback(user,id,client,res,done,Query.modifyUserAndResponse));
   });
 
 };
 
 Query.addInterest = function(client,done,req,res){
-  var interest = req.body.interest;
+  var interest = JSON.parse(req.body).interest;
+
+  console.log(interest);
 
   client.query("SELECT * FROM interests WHERE category=($1) AND value=($2)",[interest.category,interest.value],function(err, result) {
     if(err) return QueryHelper.sendError(err,res,done,500);
@@ -220,7 +231,7 @@ Query.addInterest = function(client,done,req,res){
 
 Query.getInterests = function(client,done,req,res){
   // Obtengo todos las filas de ta tabla users, los usuarios
-  var query = client.query("SELECT * FROM interests ORDER BY id ASC");
+  var query = client.query("SELECT * FROM interests ORDER BY id_interest ASC");
 
   // Agrego al array los usuarios, uno por uno
   var results = [];

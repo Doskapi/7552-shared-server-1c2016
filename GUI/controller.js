@@ -13,7 +13,10 @@ app.controller('Controller', function($scope,$http) {
     $http({
       url: '/users',
       method: "POST",
-      data: { 'user' : $scope.user}
+      headers:{
+        'Content-Type': 'text/plain'
+      },
+      data: JSON.stringify({ 'user' : $scope.user})
     }).then(function(response) {
       console.log(response.data);
     },
@@ -94,7 +97,10 @@ app.controller('Controller', function($scope,$http) {
     $http({
       url: '/users/'+$scope.ID,
       method: "PUT",
-      data: { 'user' : $scope.user}
+      headers:{
+        'Content-Type': 'text/plain'
+      },
+      data:  JSON.stringify({ 'user' : $scope.user})
     }).then(function(response) {
       console.log(response.data);
     },
@@ -107,7 +113,10 @@ app.controller('Controller', function($scope,$http) {
     $http({
       url: '/interests',
       method: "POST",
-      data: { 'interest' : $scope.interest}
+      headers:{
+        'Content-Type': 'text/plain'
+      },
+      data: JSON.stringify({ 'interest' : $scope.interest})
     }).then(function(response) {
       console.log(response.data);
     },
