@@ -28,7 +28,8 @@ Query.persistUser = function(user,client,res,done){
   client.query("INSERT INTO users(name,alias,sex,photo,email,location) values($1,$2,$3,$4,$5,$6) RETURNING id_user",[user.name,user.alias,user.sex,user.photo,user.email,user.location],function(err, result) {
     if(err) return QueryHelper.sendError(err,res,done,500);
     user.id = result.rows[0].id_user;
-    Query.persistInterestAndResponse(user,user.id,client,res,done);
+    if(QueryHelper.hasUserInterest(user)) Query.persistInterestAndResponse(user,user.id,client,res,done);
+    else Query.responseUser(user,res,done);
   });
 };
 
@@ -121,7 +122,8 @@ Query.addUser = function(client,done,req,res){
     //TODO:: VER QUE DEVUELVO SI HAY UN CAMPO INVALIDO
     if(!QueryHelper.validatePersonalUserData(user)) return QueryHelper.sendError(err,res,done,500);
     //CHEQUEO INTERESES Y LUEGO PERSISTO
-    Query.checkInterests(user,client,res,done,new PersistUserCallback(user,client,res,done,Query.persistUser));
+    if(QueryHelper.hasUserInterest(user)) Query.checkInterests(user,client,res,done,new PersistUserCallback(user,client,res,done,Query.persistUser));
+    else Query.persistUser(user,client,res,done);
   });
 
 };

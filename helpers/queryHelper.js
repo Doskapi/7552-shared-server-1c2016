@@ -39,4 +39,8 @@ QueryHelper.createInterestsTable = function(req,res){
   query.on('end', function() { client.end(); });
 };
 
+QueryHelper.hasUserInterest = function(user){
+  return user.interests.length > 0;
+};
+
 module.exports = QueryHelper;
