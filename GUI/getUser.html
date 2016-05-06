@@ -40,14 +40,24 @@
                 <tr>
                   <th>ID</th>
                   <th>Name</th>
+                  <th>Alias</th>
+                  <th>Sex</th>
+                  <th>Photo</th>
+                  <th>Email</th>
                   <th>Interests</th>
+                  <th>Location</th>
                 </tr>
               </thead>
               <tbody>
                 <tr ng-repeat="x in user">
                   <td>{{ x.id }}</td>
                   <td>{{ x.name }}</td>
+                  <td>{{ x.alias }}</td>
+                  <td>{{ x.sex }}</td>
+                  <td>{{ x.photo_profile }}</td>
+                  <td>{{ x.email }}</td>
                   <td>{{ x.interests }}</td>
+                  <td>{{ x.location }}</td>
                 </tr>
               </tbody>
             </table>

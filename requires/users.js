@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var fs = require("fs");
 var QueryHelper = require('../helpers/queryHelper');
 var Query = require('./query');
 var RequestCallback = require("../callbacks/requestCallback");
@@ -56,22 +55,7 @@ router.delete('/[0-9]+', function(req, res) {
 //TODO::PASAR EL PROCESO DEL QUERY A LA CLASE QUERY
 // Actualizar foto de perfil de usuario
 router.put('/[0-9]+/photo', function(req, res) {
-  fs.readFile(req.files.image.path, function (err, data) {
-    var imageName = req.files.image.name;
-    // If there's an error
-    if(!imageName){
-      console.log("There was an error");
-      res.redirect("/");
-      res.end();
-    } else {
-      var newPath = __dirname + "/uploads/fullsize/" + imageName;
-      // write file to uploads/fullsize folder
-      fs.writeFile(newPath, data, function (err) {
-        // let's see it
-        res.redirect("/uploads/fullsize/" + imageName);
-      });
-    }
-  });
+  Query.processQuery(req,res,new RequestCallback(req,res,Query.updateUserPhoto));
 });
 
 module.exports = router;

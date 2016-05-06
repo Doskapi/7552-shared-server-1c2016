@@ -5,11 +5,13 @@ app.controller('Controller', function($scope,$http) {
   $scope.user = {};
   $scope.user.interests = [];
   $scope.ID=undefined;
+  $scope.photo = undefined;
   $scope.interest={'category':undefined,'value':undefined};
 
   $scope.addUser = function() {
     for(var i in $scope.checkBoxes)
       if($scope.checkBoxes[i].check) $scope.user.interests.push({'category':$scope.checkBoxes[i].category,'value':$scope.checkBoxes[i].value});
+    $scope.user.photo_profile = "no_photo";
     $http({
       url: '/users',
       method: "POST",
@@ -90,10 +92,27 @@ app.controller('Controller', function($scope,$http) {
     });
   };
 
+  $scope.updatePhoto = function() {
+    $http({
+      url: '/users/'+$scope.ID+"/photo",
+      method: "PUT",
+      headers:{
+        'Content-Type': 'text/plain'
+      },
+      data:  JSON.stringify({ 'photo' : $scope.photo})
+    }).then(function(response) {
+      console.log(response.data);
+    },
+    function(response) { // optional
+      // failed
+    });
+  };
+
   $scope.modUser = function() {
     $scope.user.interests = [];
     for(var i in $scope.checkBoxes)
       if($scope.checkBoxes[i].check) $scope.user.interests.push({'category':$scope.checkBoxes[i].category,'value':$scope.checkBoxes[i].value});
+    $scope.user.photo_profile = "no_photo";
     $http({
       url: '/users/'+$scope.ID,
       method: "PUT",

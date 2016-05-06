@@ -10,7 +10,7 @@ QueryHelper.hasResult = function(result){
 };
 
 QueryHelper.validatePersonalUserData = function(user){
-  return (user.name !== undefined && user.alias !== undefined && user.email !== undefined && user.interests !== undefined && user.location !== undefined);
+  return (user.name !== undefined && user.alias !== undefined && user.sex !== undefined && user.email !== undefined && user.interests !== undefined && user.location !== undefined && user.photo_profile !== undefined);
 };
 
 QueryHelper.sendError = function(err,res,done,status){
