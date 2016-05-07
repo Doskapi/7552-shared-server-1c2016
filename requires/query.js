@@ -131,9 +131,10 @@ Query.deleteUser = function(client,done,req,res){
 Query.addUser = function(client,done,req,res){
 
   console.log(req.body);
-  var user = JSON.parse(req.body).user;
+  var user = req.body.user;
+  // var user = JSON.parse(req.body).user;
 
-  // console.log(user);
+  console.log(user);
 
   // SQL Query > Insert Data
   client.query("SELECT * FROM users WHERE email LIKE '%"+user.email+"%'",function(err,result){
