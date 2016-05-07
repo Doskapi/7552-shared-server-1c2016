@@ -16,9 +16,9 @@ app.controller('Controller', function($scope,$http) {
       url: '/users',
       method: "POST",
       headers:{
-        'Content-Type': 'text/plain'
+        'Content-Type': 'application/json'
       },
-      data: JSON.stringify({ 'user' : $scope.user})
+      data: { 'user' : $scope.user}
     }).then(function(response) {
       console.log(response.data);
     },
@@ -97,9 +97,9 @@ app.controller('Controller', function($scope,$http) {
       url: '/users/'+$scope.ID+"/photo",
       method: "PUT",
       headers:{
-        'Content-Type': 'text/plain'
+        'Content-Type': 'application/json'
       },
-      data:  JSON.stringify({ 'photo' : $scope.photo})
+      data:  { 'photo' : $scope.photo}
     }).then(function(response) {
       console.log(response.data);
     },
@@ -117,9 +117,9 @@ app.controller('Controller', function($scope,$http) {
       url: '/users/'+$scope.ID,
       method: "PUT",
       headers:{
-        'Content-Type': 'text/plain'
+        'Content-Type': 'application/json'
       },
-      data:  JSON.stringify({ 'user' : $scope.user})
+      data:  { 'user' : $scope.user}
     }).then(function(response) {
       console.log(response.data);
     },
@@ -133,9 +133,9 @@ app.controller('Controller', function($scope,$http) {
       url: '/interests',
       method: "POST",
       headers:{
-        'Content-Type': 'text/plain'
+        'Content-Type': 'application/json'
       },
-      data: JSON.stringify({ 'interest' : $scope.interest})
+      data: { 'interest' : $scope.interest}
     }).then(function(response) {
       console.log(response.data);
     },

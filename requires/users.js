@@ -52,7 +52,6 @@ router.delete('/[0-9]+', function(req, res) {
 
 });
 
-//TODO::PASAR EL PROCESO DEL QUERY A LA CLASE QUERY
 // Actualizar foto de perfil de usuario
 router.put('/[0-9]+/photo', function(req, res) {
   Query.processQuery(req,res,new RequestCallback(req,res,Query.updateUserPhoto));
