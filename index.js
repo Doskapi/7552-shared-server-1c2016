@@ -1,9 +1,19 @@
+/* Index.js */
+
+/* Main de Node.js encargada de:
+  -> Crear un app-express
+  -> Setearle body-parser para procesar data JSON de requests
+  -> Setearle headers de controller
+  -> Setearle rutas de request especifcas mediante un Router
+  -> Setearle puerto de escucha
+  -> Escuchar request desde el puerto seteado */
+
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+app.use( bodyParser.json() );       // Soportar cuerpos de request JSON-encoded
+app.use(bodyParser.urlencoded({     // Soportar cuerpos de request URL-encoded
   extended: true
 }));
 

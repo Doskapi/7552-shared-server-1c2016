@@ -1,16 +1,20 @@
+/* Interests.js */
+
+/* Clase encargada de procesar las request de la ruta /interests/* */
+
 var express = require('express');
 var router = express.Router();
-var Query = require('./query');
-var RequestCallback = require("../callbacks/requestCallback");
+var BaseQuery = require('./querys/baseQuery');
+var InterestQuery = require('./querys/interestQuery');
 
 // Alta de interest
 router.post('/', function(req, res) {
-  Query.processQuery(req,res,new RequestCallback(req,res,Query.addInterest));
+  BaseQuery.processQuery(req,res,InterestQuery.addInterest);
 });
 
 // Listado de interests
 router.get('/', function(req, res) {
-  Query.processQuery(req,res,new RequestCallback(req,res,Query.getInterests));
+  BaseQuery.processQuery(req,res,InterestQuery.getInterests);
 });
 
 module.exports = router;

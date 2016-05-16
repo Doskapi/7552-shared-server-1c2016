@@ -1,13 +1,21 @@
+/* Controller.js */
+
+/* Clase que contiene los metodos de request solicitados por los distintos archivos de html */
+
 var app = angular.module('MagicMatch', []);
 app.controller('Controller', function($scope,$http) {
 
-  //SCOPE VARIABLES
+  //VARIABLES DE SCOPE
   $scope.user = {};
   $scope.user.interests = [];
   $scope.ID=undefined;
   $scope.photo = undefined;
   $scope.interest={'category':undefined,'value':undefined};
 
+  //VARIABLES GLOBALES
+  var data;
+
+  //AGREGADO DE USUARIO
   $scope.addUser = function() {
     for(var i in $scope.checkBoxes)
       if($scope.checkBoxes[i].check) $scope.user.interests.push({'category':$scope.checkBoxes[i].category,'value':$scope.checkBoxes[i].value});
@@ -22,16 +30,16 @@ app.controller('Controller', function($scope,$http) {
     }).then(function(response) {
       console.log(response.data);
     },
-    function(response) { // optional
-      // failed
+    function(response) {
+      console.error(response);
     });
   };
 
-  var data;
+
+  //GET DE TODOS LOS INTERESES PARA QUE EL USUARIO ELIJA
   $scope.getAllInterests = function(){
     $scope.checkBoxes = [];
-    $http.get("/interests")
-    .then(function(result){ /*Caso success*/
+    $http.get("/interests").then(function(result){
       for(var i in result.data){
         data = {category: result.data[i].category, value: result.data[i].value, check: false};
         $scope.checkBoxes.push(data);
@@ -39,32 +47,37 @@ app.controller('Controller', function($scope,$http) {
     });
   };
 
+  //ELIMINACION DE USUARIO
   $scope.deleteUser = function() {
     $http.delete('/users/'+$scope.ID).then(function(response) {
       console.log(response);
     });
   };
 
+  //GET DE TODOS LOS INTERESES PARA MOSTRARLOS EN UNA TABLA
   $scope.getInterestsForTable = function () {
-    $http.get("/interests")
-    .then(function(response) {
+    $http.get("/interests").then(function(response) {
       $scope.interests = response.data;
     });
   };
 
+  //GET DE USUARIO ESPECIFICO PARA MOSTRAR EN TABLA
   $scope.getUser = function() {
     $http.get("/users/"+$scope.ID).then(function(response) {
+      console.log(response.data.user);
       $scope.user = [response.data.user];
     });
   };
 
+  //GET DE USUARIO PARA MODIFICAR
   $scope.getUserToModify = function() {
     $http.get("/users/"+$scope.ID).then(function(response) {
-      console.log(response.data.user);
-      $scope.user = response.data.user;
-    });
-  };
+       console.log(response.data.user);
+       $scope.user = response.data.user;
+     });
+   };
 
+  //GET DE TODOS LOS USUARIOS
   $scope.getUsers = function () {
     $http.get("/users")
     .then(function(response) {
@@ -73,11 +86,11 @@ app.controller('Controller', function($scope,$http) {
     });
   };
 
+  //GET DE TODOS LOS INTERESES, INCLUIDOS LOS DEL USUARIO
   $scope.getAllInterestsAndMine = function(){
     if($scope.user.interests === undefined) return;
     $scope.checkBoxes = [];
-    $http.get("/interests")
-    .then(function(result){ /*Caso success*/
+    $http.get("/interests").then(function(result){
       for(var i in result.data){
         data = {category: result.data[i].category, value: result.data[i].value, check: false};
         for(var j in $scope.user.interests){
@@ -92,6 +105,7 @@ app.controller('Controller', function($scope,$http) {
     });
   };
 
+  //MODIFICACION DE FOTO DE PERFIL
   $scope.updatePhoto = function() {
     $http({
       url: '/users/'+$scope.ID+"/photo",
@@ -103,11 +117,12 @@ app.controller('Controller', function($scope,$http) {
     }).then(function(response) {
       console.log(response.data);
     },
-    function(response) { // optional
-      // failed
+    function(response) {
+      console.error(response);
     });
   };
 
+  //MODIFICACION DE USUARIO
   $scope.modUser = function() {
     $scope.user.interests = [];
     for(var i in $scope.checkBoxes)
@@ -123,11 +138,12 @@ app.controller('Controller', function($scope,$http) {
     }).then(function(response) {
       console.log(response.data);
     },
-    function(response) { // optional
-      // failed
+    function(response) {
+      console.error(response);
     });
   };
 
+  //ALTA DE INTERES
   $scope.addInterest = function() {
     $http({
       url: '/interests',
@@ -139,8 +155,8 @@ app.controller('Controller', function($scope,$http) {
     }).then(function(response) {
       console.log(response.data);
     },
-    function(response) { // optional
-      // failed
+    function(response) {
+      console.error(response);
     });
   };
 
