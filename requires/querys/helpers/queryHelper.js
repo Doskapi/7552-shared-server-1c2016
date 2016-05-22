@@ -25,9 +25,27 @@ QueryHelper.hasDeleteUser = function(count){
   return count > 0;
 };
 
+//DEVUELVE LA ID DE LA URL DE REQUEST DE FOTOS
+QueryHelper.getIdFromPhotoRequest = function(url){
+  url = url.substring(1);
+  return url.substring(0,url.indexOf("/"));
+};
+
+//DEVUELVE EL VALUE EN LOWERCASE
+QueryHelper.getLowerCase = function(value){
+  return value.toLowerCase();
+};
+
 //VALIDA CAMPOS DE USUARIO
 QueryHelper.validatePersonalUserData = function(user){
-  return (user.name !== undefined && user.alias !== undefined && user.sex !== undefined && user.email !== undefined && user.interests !== undefined && user.location !== undefined && user.photo_profile !== undefined);
+  return (user.name !== undefined &&
+     user.alias !== undefined &&
+      user.sex !== undefined &&
+       user.email !== undefined &&
+        user.interests !== undefined &&
+         user.location !== undefined &&
+          user.photo_profile !== undefined &&
+          (user.sex == 'male' || user.sex == 'female'));
 };
 
 //ENVIO DE ERROR

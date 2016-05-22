@@ -14,6 +14,10 @@ InterestQuery.addInterest = function(client,done,req,res){
 
   console.log(interest);
 
+  //PASO EL INTERES A LOWERCASE
+  interest.category = QueryHelper.getLowerCase(interest.category);
+  interest.value = QueryHelper.getLowerCase(interest.value);
+
   client.query("SELECT * FROM interests WHERE category=($1) AND value=($2)",[interest.category,interest.value],function(err, result) {
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 

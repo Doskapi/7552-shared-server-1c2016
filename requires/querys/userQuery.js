@@ -12,7 +12,12 @@ var UserQuery = {};
 
 // CHEQUEO UN INTERES ESPECIFICO
 UserQuery.checkSpecificInterest = function(interest,client,res,done,callback){
-  client.query("SELECT * FROM interests WHERE category  LIKE '%"+interest.category+"%'",function(err, result) {
+
+  //PASO EL INTERES A LOWERCASE
+  interest.category = QueryHelper.getLowerCase(interest.category);
+  interest.value = QueryHelper.getLowerCase(interest.value);
+
+  client.query("SELECT * FROM interests WHERE category LIKE '%"+interest.category+"%'",function(err, result) {
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
     if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
@@ -106,6 +111,10 @@ UserQuery.addUser = function(client,done,req,res){
 
   console.log(user);
 
+  //PASO DATOS COMPARABLES A LOWERCASE
+  user.email = QueryHelper.getLowerCase(user.email);
+  user.sex = QueryHelper.getLowerCase(user.sex);
+
   // SQL QUERY > ALTA USUARIO
   client.query("SELECT * FROM users WHERE email LIKE '%"+user.email+"%'",function(err,result){
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
@@ -121,7 +130,6 @@ UserQuery.addUser = function(client,done,req,res){
   });
 
 };
-
 
 // OBTENCION DE TODOS LOS USUARIOS
 UserQuery.getUsers = function(client,done,req,res){
@@ -154,6 +162,35 @@ UserQuery.getUsers = function(client,done,req,res){
     done();
     return res.status(cStatus.OK).json(results);
   });
+};
+
+UserQuery.getUserPhoto = function(client,done,req,res){
+
+  //Obtengo id de la ruta
+  var id = QueryHelper.getIdFromPhotoRequest(req.url);
+  console.log("id: "+id);
+
+  // Obtengo todos las filas de ta tabla users, los usuarios
+  var query = client.query("SELECT * FROM users WHERE users.id_user ="+id,function(err,result){
+    if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
+
+    //DEVUELVO 404 SI EL USUARIO SOLICITADO NO EXISTE
+    if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.DONT_EXIST);
+  });
+
+  var data = {photo:undefined};
+
+  //OBTENGO LA DATA DE PHOTO DEL QUERY
+  query.on('row', function(row) {
+    data.photo = row.photo;
+  });
+
+  // LUEGO DE QUE TODA LA DATA ES DEVUELTA, CIERRO LA CONECCION Y ENVIO RESULTADOS
+  query.on('end', function() {
+    done();
+    return res.status(cStatus.OK).json(data);
+  });
+
 };
 
 UserQuery.getSpecificUser = function(client,done,req,res){
@@ -223,9 +260,9 @@ UserQuery.modifyUser = function(client,done,req,res){
 UserQuery.updateUserPhoto = function(client,done,req,res){
 
   //Obtengo id de la ruta
-  var url = req.url.substring(1);
-  var id = url.substring(0,url.indexOf("/"));
+  var id = QueryHelper.getIdFromPhotoRequest(req.url);
   console.log("id: "+id);
+
   var photo = req.body.photo;
 
   console.log(photo);
