@@ -8,5 +8,5 @@ Herramientas utilizadas:
 - Heroku: https://www.heroku.com/
 - PostgreSQL: http://www.postgresql.org.es/
 
-# Para correr la app localmente:
+### Para correr la app localmente:
 [Como correr el shared server localmente] (https://github.com/fmesteban/7552-shared-server-1c2016/wiki/Como-correr-el-shared-server-localmente)
