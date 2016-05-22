@@ -10,3 +10,7 @@ Herramientas utilizadas:
 
 ### Para correr la app localmente:
 [Como correr el shared server localmente] (https://github.com/fmesteban/7552-shared-server-1c2016/wiki/Como-correr-el-shared-server-localmente)
+
+### Para hacer deploy a Heroku
+
+[Como hacer deploy a Heroku] (https://github.com/fmesteban/7552-shared-server-1c2016/wiki/Como-hacer-deploy-a-Heroku)
