@@ -63,4 +63,9 @@ router.put('/[0-9]+/photo', function(req, res) {
   BaseQuery.processQuery(req,res,UserQuery.updateUserPhoto);
 });
 
+// Actualizar foto de perfil de usuario
+router.get('/[0-9]+/photo', function(req, res) {
+  BaseQuery.processQuery(req,res,UserQuery.getUserPhoto);
+});
+
 module.exports = router;
