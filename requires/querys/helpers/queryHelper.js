@@ -36,6 +36,16 @@ QueryHelper.getLowerCase = function(value){
   return value.toLowerCase();
 };
 
+//DEVUELVE LOS DATOS COMPARABLES EN LOWERCASE
+QueryHelper.getLowerCaseUser = function(user){
+  user.sex = this.getLowerCase(user.sex);
+  user.email = this.getLowerCase(user.email);
+  for(var i in user.interests){
+    user.interests[i].category = this.getLowerCase(user.interests[i].category);
+    user.interests[i].value = this.getLowerCase(user.interests[i].value);
+  }
+};
+
 //VALIDA CAMPOS DE USUARIO
 QueryHelper.validatePersonalUserData = function(user){
   return (user.name !== undefined &&
@@ -45,7 +55,7 @@ QueryHelper.validatePersonalUserData = function(user){
         user.interests !== undefined &&
          user.location !== undefined &&
           user.photo_profile !== undefined &&
-          (user.sex == 'male' || user.sex == 'female'));
+          (user.sex == 'male' || user.sex == 'female' || user.sex =='men' || user.sex=='women'));
 };
 
 //ENVIO DE ERROR

@@ -13,10 +13,6 @@ var UserQuery = {};
 // CHEQUEO UN INTERES ESPECIFICO
 UserQuery.checkSpecificInterest = function(interest,client,res,done,callback){
 
-  //PASO EL INTERES A LOWERCASE
-  interest.category = QueryHelper.getLowerCase(interest.category);
-  interest.value = QueryHelper.getLowerCase(interest.value);
-
   client.query("SELECT * FROM interests WHERE category LIKE '%"+interest.category+"%'",function(err, result) {
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
     if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
@@ -112,8 +108,7 @@ UserQuery.addUser = function(client,done,req,res){
   console.log(user);
 
   //PASO DATOS COMPARABLES A LOWERCASE
-  user.email = QueryHelper.getLowerCase(user.email);
-  user.sex = QueryHelper.getLowerCase(user.sex);
+  QueryHelper.getLowerCaseUser(user);
 
   // SQL QUERY > ALTA USUARIO
   client.query("SELECT * FROM users WHERE email LIKE '%"+user.email+"%'",function(err,result){
