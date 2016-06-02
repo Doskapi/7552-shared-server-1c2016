@@ -145,7 +145,7 @@ UserQuery.getUsers = function(client,done,req,res){
       user.user.alias = row.alias;
       user.user.email = row.email;
       user.user.sex = row.sex;
-      user.user.photo_profile = "https://shared-server.herokuapp.com//users/"+user.user.id+"/photo";
+      user.user.photo_profile = "https://shared-server.herokuapp.com/users/"+user.user.id+"/photo";
       user.user.location = row.location;
       user.user.interests.push({category:row.category,value:row.value});
       results.users.push(user);
