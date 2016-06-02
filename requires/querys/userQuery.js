@@ -171,18 +171,14 @@ UserQuery.getUserPhoto = function(client,done,req,res){
 
     //DEVUELVO 404 SI EL USUARIO SOLICITADO NO EXISTE
     if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.DONT_EXIST);
-  });
 
-  var data = {photo:undefined};
+    // CARGO LA DATA
+    var data = {photo: result.rows[0].photo};
 
-  //OBTENGO LA DATA DE PHOTO DEL QUERY
-  query.on('row', function(row) {
-    data.photo = row.photo;
-  });
-
-  // LUEGO DE QUE TODA LA DATA ES DEVUELTA, CIERRO LA CONECCION Y ENVIO RESULTADOS
-  query.on('end', function() {
+    // CIERRO LA CONECCION
     done();
+
+    // ENVIO RESULTADOS
     return res.status(cStatus.OK).json(data);
   });
 
@@ -199,27 +195,14 @@ UserQuery.getSpecificUser = function(client,done,req,res){
 
     //DEVUELVO 404 SI EL USUARIO SOLICITADO NO EXISTE
     if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.DONT_EXIST);
-  });
 
-  // Agrego al array los usuarios, uno por uno
-  var user = {user: {id: undefined,name: undefined,alias:undefined,email:undefined,photo:undefined,sex:undefined,interests:[]}};
+    // CARGO LA DATA
+    var user = {user: result.rows[0]};
 
-  query.on('row', function(row) {
-    if(user.user.id === undefined){
-      user.user.id=row.id_user;
-      user.user.name = row.name;
-      user.user.alias = row.alias;
-      user.user.email = row.email;
-      user.user.sex = row.sex;
-      user.user.photo_profile = row.photo;
-      user.user.location = row.location;
-    }
-    user.user.interests.push({category:row.category,value:row.value});
-  });
-
-  // LUEGO DE QUE TODA LA DATA ES DEVUELTA, CIERRO LA CONECCION Y ENVIO RESULTADOS
-  query.on('end', function() {
+    // CIERRO LA CONECCION
     done();
+
+    // ENVIO RESULTADOS
     return res.status(cStatus.OK).json(user);
   });
 
