@@ -40,8 +40,8 @@ app.controller('Controller', function($scope,$http) {
   $scope.getAllInterests = function(){
     $scope.checkBoxes = [];
     $http.get("/interests").then(function(result){
-      for(var i in result.data){
-        data = {category: result.data[i].category, value: result.data[i].value, check: false};
+      for(var i in result.data.interests){
+        data = {category: result.data.interests[i].category, value: result.data.interests[i].value, check: false};
         $scope.checkBoxes.push(data);
       }
     });
@@ -57,7 +57,8 @@ app.controller('Controller', function($scope,$http) {
   //GET DE TODOS LOS INTERESES PARA MOSTRARLOS EN UNA TABLA
   $scope.getInterestsForTable = function () {
     $http.get("/interests").then(function(response) {
-      $scope.interests = response.data;
+      console.log(response.data);
+      $scope.interests = response.data.interests;
     });
   };
 
@@ -91,11 +92,11 @@ app.controller('Controller', function($scope,$http) {
     if($scope.user.interests === undefined) return;
     $scope.checkBoxes = [];
     $http.get("/interests").then(function(result){
-      for(var i in result.data){
-        data = {category: result.data[i].category, value: result.data[i].value, check: false};
+      for(var i in result.data.interests){
+        data = {category: result.data.interests[i].category, value: result.data.interests[i].value, check: false};
         for(var j in $scope.user.interests){
-          if($scope.user.interests[j].category == result.data[i].category &&
-            $scope.user.interests[j].value == result.data[i].value){
+          if($scope.user.interests[j].category == result.data.interests[i].category &&
+            $scope.user.interests[j].value == result.data.interests[i].value){
             data.check = true;
             break;
           }

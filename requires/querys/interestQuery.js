@@ -40,15 +40,17 @@ InterestQuery.getInterests = function(client,done,req,res){
   var query = client.query("SELECT * FROM interests ORDER BY id_interest ASC");
 
   // Agrego al array los intereses, uno por uno
-  var results = [];
+  var interests = [];
   query.on('row', function(row) {
-    results.push(row);
+    interests.push({category:row.category,value:row.value});
   });
 
   // una vez que obtuve todos, los envio
   query.on('end', function() {
     done();
-    return res.json(results);
+    var data = {interests: interests};
+    QueryHelper.addMetadataWithCount(data,data.interests.length);
+    return res.json(data);
   });
 };
 

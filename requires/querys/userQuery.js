@@ -32,7 +32,7 @@ UserQuery.checkSpecificInterest = function(interest,client,res,done,callback){
 
 // PERSISTO EL USUARIO EN LA TABLA
 UserQuery.persistUser = function(user,client,res,done){
-  client.query("INSERT INTO users(name,alias,sex,photo,email,location) values($1,$2,$3,$4,$5,$6) RETURNING id_user",[user.name,user.alias,user.sex,user.photo_profile,user.email,user.location],function(err, result) {
+  client.query("INSERT INTO users(name,alias,sex,age,photo,email,location) values($1,$2,$3,$4,$5,$6,$7) RETURNING id_user",[user.name,user.alias,user.sex,user.age,user.photo_profile,user.email,user.location],function(err, result) {
 
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
@@ -54,7 +54,9 @@ UserQuery.persistInterest = function(interest,idUser,client,res,done,callback){
 // ENVIO RESPUESTA AL USUARIO QUE SOLICITO LA REQUEST
 UserQuery.responseUser = function(user,res,done,statusOk){
   done();
-  return res.status(statusOk).json(user);
+  var result = {user:user};
+  QueryHelper.addMetadata(result);
+  return res.status(statusOk).json(result);
 };
 
 
@@ -71,7 +73,7 @@ UserQuery.deleteInterestsAndResponse = function(user,idUser,client,res,done){
 
 // MODIFICO EL USUARIO ESPECIFICO Y ENVIO RESPUESTA AL USUARIO
 UserQuery.modifyUserAndResponse = function(user,idUser,client,res,done){
-  client.query("UPDATE users SET name=($1), alias=($2) WHERE id_user=($3)", [user.name,user.alias, idUser],function(err, result) {
+  client.query("UPDATE users SET name=($1), alias=($2), age=($3)  WHERE id_user=($4)", [user.name,user.alias,user.age, idUser],function(err, result) {
 
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
@@ -145,6 +147,7 @@ UserQuery.getUsers = function(client,done,req,res){
       user.user.alias = row.alias;
       user.user.email = row.email;
       user.user.sex = row.sex;
+      user.user.age = row.age;
       user.user.photo_profile = "https://shared-server.herokuapp.com/users/"+user.user.id+"/photo";
       user.user.location = row.location;
       user.user.interests.push({category:row.category,value:row.value});
@@ -155,6 +158,7 @@ UserQuery.getUsers = function(client,done,req,res){
   // LUEGO DE QUE TODA LA DATA ES DEVUELTA, CIERRO LA CONECCION Y ENVIO RESULTADOS
   query.on('end', function() {
     done();
+    QueryHelper.addMetadataWithCount(results,results.users.length);
     return res.status(cStatus.OK).json(results);
   });
 };
@@ -196,14 +200,38 @@ UserQuery.getSpecificUser = function(client,done,req,res){
     //DEVUELVO 404 SI EL USUARIO SOLICITADO NO EXISTE
     if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.DONT_EXIST);
 
+    //ARMO LA DATA
+    var user = {};
+
+    var userData;
+
+    for(var i=0;i<result.rows.length;++i){
+      userData = result.rows[i];
+      if(i===0){
+        user.id=userData.id_user;
+        user.name = userData.name;
+        user.alias = userData.alias;
+        user.email = userData.email;
+        user.sex = userData.sex;
+        user.age = userData.age;
+        user.photo_profile = userData.photo;
+        user.location = userData.location;
+        user.interests = [];
+      }
+      user.interests.push({category:userData.category,value:userData.value});
+    }
+
     // CARGO LA DATA
-    var user = {user: result.rows[0]};
+    var data = {user: user};
+
+    //LE AGREGO EL CAMPO METADATA
+    QueryHelper.addMetadata(data);
 
     // CIERRO LA CONECCION
     done();
 
     // ENVIO RESULTADOS
-    return res.status(cStatus.OK).json(user);
+    return res.status(cStatus.OK).json(data);
   });
 
 };
