@@ -19,7 +19,6 @@ app.controller('Controller', function($scope,$http) {
   $scope.addUser = function() {
     for(var i in $scope.checkBoxes)
       if($scope.checkBoxes[i].check) $scope.user.interests.push({'category':$scope.checkBoxes[i].category,'value':$scope.checkBoxes[i].value});
-    $scope.user.photo_profile = "no_photo";
     $http({
       url: '/users',
       method: "POST",
@@ -128,7 +127,6 @@ app.controller('Controller', function($scope,$http) {
     $scope.user.interests = [];
     for(var i in $scope.checkBoxes)
       if($scope.checkBoxes[i].check) $scope.user.interests.push({'category':$scope.checkBoxes[i].category,'value':$scope.checkBoxes[i].value});
-    $scope.user.photo_profile = "no_photo";
     $http({
       url: '/users/'+$scope.ID,
       method: "PUT",

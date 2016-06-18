@@ -79,7 +79,7 @@ UserQuery.deleteInterestsAndResponse = function(user,idUser,client,res,done){
 
 // MODIFICO EL USUARIO ESPECIFICO Y ENVIO RESPUESTA AL USUARIO
 UserQuery.modifyUserAndResponse = function(user,idUser,client,res,done){
-  client.query("UPDATE users SET name=($1), alias=($2), age=($3)  WHERE id_user=($4)", [user.name,user.alias,user.age, idUser],function(err, result) {
+  client.query("UPDATE users SET name=($1), alias=($2), age=($3),photo=($4)  WHERE users.id=($5)", [user.name,user.alias,user.age,user.photo_profile,idUser],function(err, result) {
 
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
@@ -282,7 +282,7 @@ UserQuery.updateUserPhoto = function(client,done,req,res){
   console.log(photo);
 
   // SQL QUERY > MODIFICACION DE FOTO DE PERFIL DE USUARIO
-  var query = client.query("UPDATE users SET photo=($1) WHERE id_user=($2)", [photo, id],function(err,result){
+  var query = client.query("UPDATE users SET photo=($1) WHERE users.id=($2)", [photo, id],function(err,result){
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
     done();
 
