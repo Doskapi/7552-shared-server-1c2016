@@ -12,7 +12,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 
-app.use( bodyParser.json() );       // Soportar cuerpos de request JSON-encoded
+app.use( bodyParser.json({limit: "50mb"}) );       // Soportar cuerpos de request JSON-encoded
 app.use(bodyParser.urlencoded({     // Soportar cuerpos de request URL-encoded
   extended: true
 }));
