@@ -11,3 +11,7 @@ Herramientas utilizadas:
 ### Para mas informacion
 
 [Visitar la wiki!] (https://github.com/fmesteban/7552-shared-server-1c2016/wiki)
+
+### Para ver la documentacion del proyecto
+
+[Visitar la doc!] (https://github.com/fmesteban/7552-shared-server-1c2016/wiki)
