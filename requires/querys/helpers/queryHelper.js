@@ -84,7 +84,7 @@ QueryHelper.validatePersonalUserData = function(user){
   QueryHelper.createUsersTable = function(req,res){
     var client = new pg.Client(connectionString);
     client.connect();
-    var query = client.query('CREATE TABLE users(id_user SERIAL PRIMARY KEY, name text, alias text, sex text,age integer,photo text, email text,location json)');
+    var query = client.query('CREATE TABLE users(id_user SERIAL PRIMARY KEY,id integer,name text, alias text, sex text,age integer,photo text, email text,location json)');
     query.on('end', function() { client.end(); });
   };
 
@@ -92,7 +92,7 @@ QueryHelper.validatePersonalUserData = function(user){
   QueryHelper.createUsersInterestsTable = function(req,res){
     var client = new pg.Client(connectionString);
     client.connect();
-    var query = client.query('CREATE TABLE users_interests(id SERIAL PRIMARY KEY,id_user integer REFERENCES users(id_user) ON DELETE CASCADE,category text, value text)');
+    var query = client.query('CREATE TABLE users_interests(id_interest SERIAL PRIMARY KEY,id_user integer REFERENCES users(id_user) ON DELETE CASCADE,category text, value text)');
     query.on('end', function() { client.end(); });
   };
 

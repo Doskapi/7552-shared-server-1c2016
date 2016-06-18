@@ -32,14 +32,20 @@ UserQuery.checkSpecificInterest = function(interest,client,res,done,callback){
 
 // PERSISTO EL USUARIO EN LA TABLA
 UserQuery.persistUser = function(user,client,res,done){
-  client.query("INSERT INTO users(name,alias,sex,age,photo,email,location) values($1,$2,$3,$4,$5,$6,$7) RETURNING id_user",[user.name,user.alias,user.sex,user.age,user.photo_profile,user.email,user.location],function(err, result) {
+  client.query("INSERT INTO users(id,name,alias,sex,age,photo,email,location) values(0,$1,$2,$3,$4,$5,$6,$7) RETURNING id_user",[user.name,user.alias,user.sex,user.age,user.photo_profile,user.email,user.location],function(err, result) {
 
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
     user.id = result.rows[0].id_user;
 
-    //MANDO STATUS 201 DEL ADD USER
-    QueryHelper.persistInterestAndResponse(user,user.id,client,res,done,201,UserQuery.persistInterest,UserQuery.responseUser);
+    client.query("UPDATE users SET id=($1) WHERE id_user=($2)", [user.id,user.id],function(err, result) {
+
+      if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
+
+      //MANDO STATUS 201 DEL ADD USER
+      QueryHelper.persistInterestAndResponse(user,user.id,client,res,done,201,UserQuery.persistInterest,UserQuery.responseUser);
+
+    });
   });
 };
 
@@ -88,7 +94,7 @@ UserQuery.deleteUser = function(client,done,req,res){
   var id = req.url.substring(1);
 
   // SQL QUERY -> ELIMINACION DE USUARIO ESPECIFICO
-  client.query("DELETE FROM users WHERE id_user="+id,function(err, result) {
+  client.query("DELETE FROM users WHERE id="+id,function(err, result) {
 
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
@@ -132,17 +138,17 @@ UserQuery.addUser = function(client,done,req,res){
 UserQuery.getUsers = function(client,done,req,res){
 
   // Obtengo todos las filas de ta tabla users, los usuarios
-  var query = client.query("SELECT * FROM users INNER JOIN users_interests ON (users.id_user = users_interests.id_user) ORDER BY id ASC");
+  var query = client.query("SELECT * FROM users LEFT JOIN users_interests ON (users.id_user = users_interests.id_user) ORDER BY users.id_user ASC");
 
   // Agrego al array los usuarios, uno por uno
   var results = {users:[]};
   var user;
-  var idUser;
+  var id;
   query.on('row', function(row) {
-    if(idUser != row.id_user){
-      idUser = row.id_user;
+    if(id != row.id){
+      id = row.id;
       user = {user: {id: undefined,name: undefined,alias:undefined,email:undefined,photo:undefined,sex:undefined,interests:[]}};
-      user.user.id=row.id_user;
+      user.user.id=row.id;
       user.user.name = row.name;
       user.user.alias = row.alias;
       user.user.email = row.email;
@@ -150,9 +156,10 @@ UserQuery.getUsers = function(client,done,req,res){
       user.user.age = row.age;
       user.user.photo_profile = "https://shared-server.herokuapp.com/users/"+user.user.id+"/photo";
       user.user.location = row.location;
-      user.user.interests.push({category:row.category,value:row.value});
+      if(row.category !== null) user.user.interests.push({category:row.category,value:row.value});
       results.users.push(user);
-    }else user.user.interests.push({category:row.category,value:row.value});
+    }else if(row.category !== null) user.user.interests.push({category:row.category,value:row.value});
+  // }
   });
 
   // LUEGO DE QUE TODA LA DATA ES DEVUELTA, CIERRO LA CONECCION Y ENVIO RESULTADOS
@@ -194,7 +201,7 @@ UserQuery.getSpecificUser = function(client,done,req,res){
   var id = req.url.substring(1);
 
   // Obtengo todos las filas de ta tabla users, los usuarios
-  var query = client.query("SELECT * FROM users INNER JOIN users_interests ON (users.id_user = users_interests.id_user) WHERE users.id_user ="+id,function(err,result){
+  var query = client.query("SELECT * FROM users LEFT JOIN users_interests ON (users.id_user = users_interests.id_user) WHERE users.id ="+id,function(err,result){
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
     //DEVUELVO 404 SI EL USUARIO SOLICITADO NO EXISTE
@@ -206,9 +213,10 @@ UserQuery.getSpecificUser = function(client,done,req,res){
     var userData;
 
     for(var i=0;i<result.rows.length;++i){
+      console.log(result.rows[i]);
       userData = result.rows[i];
       if(i===0){
-        user.id=userData.id_user;
+        user.id=userData.id;
         user.name = userData.name;
         user.alias = userData.alias;
         user.email = userData.email;
@@ -218,7 +226,7 @@ UserQuery.getSpecificUser = function(client,done,req,res){
         user.location = userData.location;
         user.interests = [];
       }
-      user.interests.push({category:userData.category,value:userData.value});
+      if(userData.category !== null) user.interests.push({category:userData.category,value:userData.value});
     }
 
     // CARGO LA DATA
