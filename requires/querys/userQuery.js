@@ -113,7 +113,7 @@ UserQuery.addUser = function(client,done,req,res){
 
   var user = req.body.user;
 
-  console.log(user);
+  console.log(user.email);
 
   //PASO DATOS COMPARABLES A LOWERCASE
   QueryHelper.getLowerCaseUser(user);
@@ -252,7 +252,7 @@ UserQuery.modifyUser = function(client,done,req,res){
 
   var user = req.body.user;
 
-  console.log(user);
+  console.log(user.email);
 
   // SQL QUERY > MODFICACION DE USUARIO
   var query = client.query("SELECT * FROM users WHERE id_user ="+id,function(err,result){
