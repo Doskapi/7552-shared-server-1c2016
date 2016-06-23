@@ -4,12 +4,46 @@
 
 Documentacion referente al Client
 
+*Descripcion General*
+======================================
+
+Aplicacion programada en Java mediante la herramienta Android Studio. Características de la aplicación:
+
+* Posee 7 Activities que controlan el sistema.
+
+* Permite la autentificación de usuarios y el registro de los mismos en el sistema.
+
+* Permite solicitar nuevos candidatos a Match, otorgando la posibilidad de seleccionar al candidato para un posible match o descartarlo.
+
+* Permite la visualización los matches logrados.
+
+* Provee Servicios de ubicación mediante Gps e Internet.
+
+* Permite agregar intereses sobre distintas categorías.
+
+* Permite modificar el Perfil incluyendo su foto.
+
+Modelo
+--------------------------------------
+
+.. image:: Client.png
+
+*Manual Tecnico*
+======================================
+
+Para dirigirse al manual tecnico de la app de android haz `click aqui <https://docs.google.com/document/d/1ywTXbRWQwvXkzJytMPT28nUFvla5yzaMYR3njYsEXu0/edit>`_
+
+*Manual de Usuario*
+======================================
+
+Para dirigirse al manual de usuario de la app de android haz `click aqui <https://docs.google.com/document/d/1EPHc5CqmvXWD4v1ImhP_M9_jVWhZaYqlVmXiQpdiND8/edit>`_
+
 *Repositorio*
 ======================================
 
-Para dirigirse al repositorio del Client haz `click aqui <https://github.com/fmesteban/7552-client-1c2016>`_
+Para dirigirse al manual tecnico de la app de android haz `click aqui <https://github.com/fmesteban/7552-client-1c2016>`_
 
-*Informacion General*
+*Mas Informacion*
 ======================================
 
-Para mas informacion sobre el Client haz `click aqui <https://github.com/fmesteban/7552-client-1c2016/blob/master/README.md>`_
+Para mas informacion sobre el Client visitar la wiki haciendo `click aqui <https://github.com/fmesteban/7552-client-1c2016/wiki>`_

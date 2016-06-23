@@ -4,12 +4,32 @@
 
 Documentacion referente al App Server
 
+*Descripcion General*
+======================================
+
+Aplicacion programada en C++. Basicamente contiene:
+
+* jsoncpp: librería externa que se encarga de manejar el parseo en formato JSON. Se utiliza tanto para la comunicación con los clientes (aplicaciones móviles) como para el shared server.
+* rocksdb: librería externa que se encarga de manejar la interacción con la base de datos NoSQL de tipo clave-valor. Esta base de datos es propia y local al app-server. En la misma, se persisten:
+    * Suggestions: para persistir aun ante reinicios del servidor informacion de que usuario fue recomendado a qué otro usuario. Las mismas se guardan de la siguiente forma:  
+`        key: "suggestions"`  
+        `value: JSON generado de la lista de suggestions`  
+    * Matches: para persistir aun ante reinicios del servidor informacion de que usuario tiene match y conversaciones con que usuarios. Los mismos se guardan de la siguiente forma:  
+`        key: "matches"`  
+        `value: JSON generado de la lista de matches`  
+* mongoose: librería externa que se encarga de manejar la comunicación de red con los clientes y el shared server mediante el protocolo HTTP.
+
+Modelo
+--------------------------------------
+
+.. image:: App-Server.png
+
 *Repositorio*
 ======================================
 
 Para dirigirse al repositorio del App Server haz `click aqui <https://github.com/fmesteban/7552-app-server-1c2016>`_
 
-*Informacion General*
+*Mas Informacion*
 ======================================
 
-Para mas informacion sobre el App Server haz `click aqui <https://github.com/fmesteban/7552-app-server-1c2016/blob/master/README.md>`_
+Para mas informacion sobre el App Server visitar la wiki haciendo `click aqui <https://github.com/fmesteban/7552-app-server-1c2016/wiki>`_

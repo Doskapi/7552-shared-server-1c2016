@@ -62,13 +62,47 @@
   <div class="section" id="app-server">
 <h1><strong>App Server</strong><a class="headerlink" href="#app-server" title="Permalink to this headline">¶</a></h1>
 <p>Documentacion referente al App Server</p>
+<div class="section" id="descripcion-general">
+<h2><em>Descripcion General</em><a class="headerlink" href="#descripcion-general" title="Permalink to this headline">¶</a></h2>
+<p>Aplicacion programada en C++. Basicamente contiene:</p>
+<ul>
+<li><p class="first">jsoncpp: librería externa que se encarga de manejar el parseo en formato JSON. Se utiliza tanto para la comunicación con los clientes (aplicaciones móviles) como para el shared server.</p>
+</li>
+<li><dl class="first docutils">
+<dt>rocksdb: librería externa que se encarga de manejar la interacción con la base de datos NoSQL de tipo clave-valor. Esta base de datos es propia y local al app-server. En la misma, se persisten:</dt>
+<dd><ul class="first last simple">
+<li>Suggestions: para persistir aun ante reinicios del servidor informacion de que usuario fue recomendado a qué otro usuario. Las mismas se guardan de la siguiente forma:</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="docutils">
+<dt>`        key: &#8220;suggestions&#8221;`</dt>
+<dd><blockquote class="first">
+<div><cite>value: JSON generado de la lista de suggestions</cite></div></blockquote>
+<ul class="last simple">
+<li>Matches: para persistir aun ante reinicios del servidor informacion de que usuario tiene match y conversaciones con que usuarios. Los mismos se guardan de la siguiente forma:</li>
+</ul>
+</dd>
+<dt>`        key: &#8220;matches&#8221;`</dt>
+<dd><cite>value: JSON generado de la lista de matches</cite></dd>
+</dl>
+<ul class="simple">
+<li>mongoose: librería externa que se encarga de manejar la comunicación de red con los clientes y el shared server mediante el protocolo HTTP.</li>
+</ul>
+<div class="section" id="modelo">
+<h3>Modelo<a class="headerlink" href="#modelo" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/App-Server.png" src="_images/App-Server.png" />
+</div>
+</div>
 <div class="section" id="repositorio">
 <h2><em>Repositorio</em><a class="headerlink" href="#repositorio" title="Permalink to this headline">¶</a></h2>
 <p>Para dirigirse al repositorio del App Server haz <a class="reference external" href="https://github.com/fmesteban/7552-app-server-1c2016">click aqui</a></p>
 </div>
-<div class="section" id="informacion-general">
-<h2><em>Informacion General</em><a class="headerlink" href="#informacion-general" title="Permalink to this headline">¶</a></h2>
-<p>Para mas informacion sobre el App Server haz <a class="reference external" href="https://github.com/fmesteban/7552-app-server-1c2016/blob/master/README.md">click aqui</a></p>
+<div class="section" id="mas-informacion">
+<h2><em>Mas Informacion</em><a class="headerlink" href="#mas-informacion" title="Permalink to this headline">¶</a></h2>
+<p>Para mas informacion sobre el App Server visitar la wiki haciendo <a class="reference external" href="https://github.com/fmesteban/7552-app-server-1c2016/wiki">click aqui</a></p>
 </div>
 </div>
 
@@ -81,8 +115,12 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#"><strong>App Server</strong></a><ul>
+<li><a class="reference internal" href="#descripcion-general"><em>Descripcion General</em></a><ul>
+<li><a class="reference internal" href="#modelo">Modelo</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#repositorio"><em>Repositorio</em></a></li>
-<li><a class="reference internal" href="#informacion-general"><em>Informacion General</em></a></li>
+<li><a class="reference internal" href="#mas-informacion"><em>Mas Informacion</em></a></li>
 </ul>
 </li>
 </ul>

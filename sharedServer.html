@@ -62,13 +62,37 @@
   <div class="section" id="shared-server">
 <h1><strong>Shared Server</strong><a class="headerlink" href="#shared-server" title="Permalink to this headline">¶</a></h1>
 <p>Documentacion referente al Shared-Server</p>
+<div class="section" id="descripcion-general">
+<h2><em>Descripcion General</em><a class="headerlink" href="#descripcion-general" title="Permalink to this headline">¶</a></h2>
+<p>Aplicacion programada en JavaScript mediante la herramienta NodeJS. Basicamente contiene:</p>
+<ul class="simple">
+<li>REST(Express): modulo proveedor de un app de Request HTTP que se encarga de la comunicacion con el App-Server y con las vistas programadas en HTML. Permite el intercambio de informacion de usuarios e intereses que estan almacenados en la DB de PostgreSQL.</li>
+<li>PG: modulo encargado de la comunicacion con la DB de PostgreSQL.</li>
+<li>Body-Parser: modulo encargado de facilitar la comunicacion mediante JSON.</li>
+<li>Router: permite que las request de HTTP sean procesadas por distintas &#8220;rutas&#8221;, aislando los request de usuarios, intereses y vistas por separado.</li>
+</ul>
+<p>Ademas, como se menciono anteriormente, posee:</p>
+<ul class="simple">
+<li>Base de Datos en PostgreSQL: se almacena la informacion de usuarios e intereses.</li>
+<li>Servidor deployado en Heroku: permite que nuestro servidor este ONLINE en la nube de Heroku y probarlo sin necesidad de correrlo localmente.</li>
+<li>Front-End: posee una carpeta llamada &#8220;GUI&#8221; donde se encuentran los archivos de HTML que proveen una vista de consultas al Shared-Server. Contiene un controlador programado en AngularJS el cual se encarga de los request de HTTP que se realizan en cada archivo de HTML. Ademas cada uno de estos archivos utiliza la herramienta Bootstrap para lograr una vista adaptable a las diferentes resoluciones.</li>
+</ul>
+<div class="section" id="modelo">
+<h3>Modelo<a class="headerlink" href="#modelo" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/Shared-Server.png" src="_images/Shared-Server.png" />
+</div>
+</div>
+<div class="section" id="manual-de-la-gui">
+<h2><em>Manual de la GUI</em><a class="headerlink" href="#manual-de-la-gui" title="Permalink to this headline">¶</a></h2>
+<p>Para dirigirse al manual de la GUI haz <a class="reference external" href="https://docs.google.com/document/d/16kkTpyCw1wGypgImxOEqgOxIT8ol9gtSsC4yye3guhU/edit">click aqui</a></p>
+</div>
 <div class="section" id="repositorio">
 <h2><em>Repositorio</em><a class="headerlink" href="#repositorio" title="Permalink to this headline">¶</a></h2>
 <p>Para dirigirse al repositorio del Shared-Server haz <a class="reference external" href="https://github.com/fmesteban/7552-shared-server-1c2016">click aqui</a></p>
 </div>
-<div class="section" id="informacion-general">
-<h2><em>Informacion General</em><a class="headerlink" href="#informacion-general" title="Permalink to this headline">¶</a></h2>
-<p>Para mas informacion sobre el Shared-Server haz <a class="reference external" href="https://github.com/fmesteban/7552-shared-server-1c2016/blob/master/README.md">click aqui</a></p>
+<div class="section" id="mas-informacion">
+<h2><em>Mas Informacion</em><a class="headerlink" href="#mas-informacion" title="Permalink to this headline">¶</a></h2>
+<p>Para mas informacion sobre el Shared-Server visitar la wiki haciendo <a class="reference external" href="https://github.com/fmesteban/7552-shared-server-1c2016/wiki">click aqui</a></p>
 </div>
 </div>
 
@@ -81,8 +105,13 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#"><strong>Shared Server</strong></a><ul>
+<li><a class="reference internal" href="#descripcion-general"><em>Descripcion General</em></a><ul>
+<li><a class="reference internal" href="#modelo">Modelo</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#manual-de-la-gui"><em>Manual de la GUI</em></a></li>
 <li><a class="reference internal" href="#repositorio"><em>Repositorio</em></a></li>
-<li><a class="reference internal" href="#informacion-general"><em>Informacion General</em></a></li>
+<li><a class="reference internal" href="#mas-informacion"><em>Mas Informacion</em></a></li>
 </ul>
 </li>
 </ul>

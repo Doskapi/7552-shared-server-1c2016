@@ -4,12 +4,44 @@
 
 Documentacion referente al Shared-Server
 
+*Descripcion General*
+======================================
+
+Aplicacion programada en JavaScript mediante la herramienta NodeJS. Basicamente contiene:
+
+* REST(Express): modulo proveedor de un app de Request HTTP que se encarga de la comunicacion con el App-Server y con las vistas programadas en HTML. Permite el intercambio de informacion de usuarios e intereses que estan almacenados en la DB de PostgreSQL.
+
+* PG: modulo encargado de la comunicacion con la DB de PostgreSQL.
+
+* Body-Parser: modulo encargado de facilitar la comunicacion mediante JSON.
+
+* Router: permite que las request de HTTP sean procesadas por distintas "rutas", aislando los request de usuarios, intereses y vistas por separado.
+
+Ademas, como se menciono anteriormente, posee:
+
+* Base de Datos en PostgreSQL: se almacena la informacion de usuarios e intereses.
+
+* Servidor deployado en Heroku: permite que nuestro servidor este ONLINE en la nube de Heroku y probarlo sin necesidad de correrlo localmente.
+
+* Front-End: posee una carpeta llamada "GUI" donde se encuentran los archivos de HTML que proveen una vista de consultas al Shared-Server. Contiene un controlador programado en AngularJS el cual se encarga de los request de HTTP que se realizan en cada archivo de HTML. Ademas cada uno de estos archivos utiliza la herramienta Bootstrap para lograr una vista adaptable a las diferentes resoluciones.
+
+Modelo
+--------------------------------------
+
+.. image:: Shared-Server.png
+
+*Manual de la GUI*
+======================================
+
+
+Para dirigirse al manual de la GUI haz `click aqui <https://docs.google.com/document/d/16kkTpyCw1wGypgImxOEqgOxIT8ol9gtSsC4yye3guhU/edit>`_
+
 *Repositorio*
 ======================================
 
 Para dirigirse al repositorio del Shared-Server haz `click aqui <https://github.com/fmesteban/7552-shared-server-1c2016>`_
 
-*Informacion General*
+*Mas Informacion*
 ======================================
 
-Para mas informacion sobre el Shared-Server haz `click aqui <https://github.com/fmesteban/7552-shared-server-1c2016/blob/master/README.md>`_
+Para mas informacion sobre el Shared-Server visitar la wiki haciendo `click aqui <https://github.com/fmesteban/7552-shared-server-1c2016/wiki>`_
