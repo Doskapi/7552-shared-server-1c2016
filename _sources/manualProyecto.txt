@@ -1,0 +1,104 @@
+==============================================
+**Manual de Proyecto**
+==============================================
+
+
+Integrantes del Proyecto
+------------------------
+* Esteban Federico
+
+* Ludueño Lucas
+
+* Vicario Sebastián
+
+* Werner Ezequiel
+
+
+Objetivo
+------------------------
+El objetivo del Proyecto es la implementación de una aplicación android que permita generar encuentros entre dos personas.
+
+Para ello se diseñó un sistema que consta de tres componentes: 
+
+* Un servidor (Application Server), el cual será el responsable del procesamiento, almacenamiento y el delivery de las solicitudes de los usuarios. 
+
+* Un servidor (Shared Server), el cual será responsable de la administración de los perfiles de usuarios.  
+
+* Un cliente, el cual será responsable de visualizar los matches y candidatos asociados al usuario que se encuentra conectado 
+
+
+.. image:: nube.png
+
+
+Documentación
+------------------------
+La documentación del trabajo se puede encontrar aqui `aqui <http://fmesteban.github.io/7552-shared-server-1c2016/index.html>`_
+
+
+
+División de Tareas
+--------------------------
+La división de tareas se realizó por componente:
+
+* App Android (Cliente): Ludueño Lucas.
+
+* Shared Server: Vicario Sebastián
+
+* App Server: Esteban Federico y Werner Ezequiel
+
+Cada uno de estos componentes se encuentran en un repositorio GitHub:
+
+* `App Android Cliente <https://github.com/fmesteban/7552-client-1c2016>`_
+
+* `Shared Server <https://github.com/fmesteban/7552-shared-server-1c2016>`_
+
+* `App Server  <https://github.com/fmesteban/7552-app-server-1c2016>`_
+
+
+Organización de entregas
+-------------------------------------
+El proyecto constó de 3 entregas o checkpoints, durante los cuales se realizaron divisiones de tareas entre los distintos integrantes del grupo.
+Las mismas se pueden ver en la pestaña issues dentro de cada repositorio:
+
+* `App Android Cliente Issues <https://github.com/fmesteban/7552-client-1c2016/issues>`_
+
+* `Shared Server Issues <https://github.com/fmesteban/7552-shared-server-1c2016/issues>`_
+
+* `App Server Issues  <https://github.com/fmesteban/7552-app-server-1c2016/issues>`_
+
+En cada uno se puede seleccionar los 3 checkpoints en que se dividió el trabajo (en Milestones) y visualizar los tickets asignados a cada integrante en cada entrega.
+
+
+Hipótesis y Supuestos
+-------------------------------------
+* Todo usuario tiene una contraseña para loguearse en la aplicación android.
+* Al registrarse un usuario en la aplicación, se setea un interés sexual que abarca tanto hombres como mujeres. Luego el usuario podrá modificarlo.
+* Sólo existen tres posibles intereses sexuales: men, women y any. No se puede no tener un interés sexual.
+* La búsqueda de posibles matches o sugerencias se realiza a partir de un radio máximo determinado por un cálculo a partir de las ubicaciones de los usuarios.
+* Se pueden tener varias cuentas de Magical Match en un mismo dispositivo.
+* Las conversaciones las guarda la aplicación android, el Servidor sólo envía los mensajes nuevos cuando los pide cada cliente.
+* No hay cantidad máxima de matches que pueda tener un usuario.
+
+
+
+Known issues
+--------------------------------------
+Las únicas dos cuestiones que quedaron pendientes son:
+
+* Persistir las contraseñas de los usuarios. Si bien estaba casi terminada, no se pudo llegar a persistir las mismas del lado del Servidor, por lo que un usuario puede ingresar sin contraseña.
+
+* Limitar el máximo de sugerencias por día 
+
+
+Lecciones aprendidas
+--------------------------------------
+Generalmente fue muy bueno el desarrollo del trabajo práctico a los largo del cuatrimestre. Nos ayudó mucho la comunicación diaria entre los integrantes del grupo y haber podido desarrollar el mismo de manera iterativa e incremental influyó en que los errores fueran pocos y los cambios no llevaran mucho tiempo corregirlos. 
+Consideramos que habernos dividido las tareas por aplicación, como se explicó al comienzo del informe, influyó positivamente en el trabajo, ya que cada uno tenía una responsabilidad asignada y una meta definida. 
+Otra de las cosas que positivamente afectó el trabajo en equipo fue haber definido con anterioridad todos los protocolos entre el cliente <-> servidor  <-> shared server, permitiendo que los cambios en las aplicaciones sean mínimos.
+Por último, como cuestión que afectó negativamente el desarrollo del trabajo, podemos destacar que los integrantes del grupo no estábamos familiarizados con las tecnologías, lo cual ocasionó que invirtamos un buen porcentaje del tiempo del trabajo aprendiéndolas y acostumbrándonos a ellas.
+
+
+Conclusiones
+--------------------------------------
+Como conclusiones podemos destacar que el trabajo en general fue muy bueno. La organización, la comunicación y la ayuda continua entre los integrantes del grupo hizo que se puedan llegar a cumplir con los objetivos del trabajo en tiempo y forma. 
+Los integrantes del grupo estamos de acuerdo en que el proyecto resultó ser una buena experiencia en la que aprendimos no solo nuevas tecnologías, sino que a trabajar en grupo, organizamos, dividir tareas y realizar tareas de estimación para llegar con lo planteado en cada entrega.

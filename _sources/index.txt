@@ -15,6 +15,7 @@ para el funcionamiento de la app "Magical Match"
 .. toctree::
    :maxdepth: 2
 
+   manualProyecto
    sharedServer
    appServer
    client
