@@ -252,6 +252,9 @@ UserQuery.modifyUser = function(client,done,req,res){
 
   var user = req.body.user;
 
+  //PASO DATOS COMPARABLES A LOWERCASE
+  QueryHelper.getLowerCaseUser(user);
+
   console.log(user.email);
 
   // SQL QUERY > MODFICACION DE USUARIO
