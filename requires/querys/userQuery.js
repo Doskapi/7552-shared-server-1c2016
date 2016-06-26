@@ -99,11 +99,11 @@ UserQuery.deleteUser = function(client,done,req,res){
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
     //DEVUELVO 404 SI EL USUARIO SOLICITADO NO EXISTE
-    if(!QueryHelper.hasDeleteUser(result.rowCount)) return QueryHelper.sendError(err,res,done,cStatus.DONT_EXIST);
+    if(!QueryHelper.hasDeleteUser(result.rowCount)) return res.status(cStatus.DONT_EXIST).json({msg:"User with id: "+id+" dont exist"});
 
     done();
     //DEVUELVO 200 INFORMANDO DELETE SATISFACTORIO
-    return res.status(cStatus.OK).json();
+    return res.status(cStatus.OK).json({msg:"Delete user succesfully"});
   });
 
 };
@@ -114,19 +114,20 @@ UserQuery.addUser = function(client,done,req,res){
   var user = req.body.user;
 
   console.log(user.email);
-
+  
   //PASO DATOS COMPARABLES A LOWERCASE
   QueryHelper.getLowerCaseUser(user);
 
   // SQL QUERY > ALTA USUARIO
   client.query("SELECT * FROM users WHERE email LIKE '%"+user.email+"%'",function(err,result){
+
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
     //DEVUELVO 500 SI EL MAIL YA ESTA EN USO
-    if(QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
+    if(QueryHelper.hasResult(result)) return res.status(cStatus.ERROR).json({msg:"Email already exist"});
 
     //DEVUELVO 400 SI FALTA ALGUN CAMPO
-    if(!QueryHelper.validatePersonalUserData(user)) return QueryHelper.sendError(err,res,done,cStatus.MISS_FIELD);
+    if(!QueryHelper.validatePersonalUserData(user)) return res.status(cStatus.MISS_FIELD).json({msg:"Falta algun campo por completar"});
 
     //CHEQUEO INTERESES Y LUEGO PERSISTO
     QueryHelper.checkInterests(user,client,res,done,UserQuery.checkSpecificInterest,new PersistUserCallback(user,client,res,done,UserQuery.persistUser));
@@ -181,7 +182,7 @@ UserQuery.getUserPhoto = function(client,done,req,res){
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
     //DEVUELVO 404 SI EL USUARIO SOLICITADO NO EXISTE
-    if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.DONT_EXIST);
+    if(!QueryHelper.hasResult(result)) return res.status(cStatus.DONT_EXIST).json({msg:"User with id: "+id+" dont exist"});
 
     // CARGO LA DATA
     var data = {photo: result.rows[0].photo};
@@ -205,7 +206,7 @@ UserQuery.getSpecificUser = function(client,done,req,res){
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
     //DEVUELVO 404 SI EL USUARIO SOLICITADO NO EXISTE
-    if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.DONT_EXIST);
+    if(!QueryHelper.hasResult(result)) return res.status(cStatus.DONT_EXIST).json({msg:"User with id: "+id+" dont exist"});
 
     //ARMO LA DATA
     var user = {};
@@ -262,10 +263,10 @@ UserQuery.modifyUser = function(client,done,req,res){
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
     //DEVUELVO 404 SI EL USUARIO SOLICITADO NO EXISTE
-    if(!QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.DONT_EXIST);
+    if(!QueryHelper.hasResult(result)) return res.status(cStatus.DONT_EXIST).json({msg:"User with id: "+id+" dont exist"});
 
     //DEVUELVO 400 SI FALTA ALGUN CAMPO
-    if(!QueryHelper.validatePersonalUserData(user)) return QueryHelper.sendError(err,res,done,cStatus.MISS_FIELD);
+    if(!QueryHelper.validatePersonalUserData(user)) return res.status(cStatus.MISS_FIELD).json({msg:"Falta algun campo por completar"});
 
     //CHEQUEO INTERESES Y LUEGO PERSISTO
     QueryHelper.checkInterests(user,client,res,done,UserQuery.checkSpecificInterest,new ModifyUserCallback(user,id,client,res,done,UserQuery.modifyUserAndResponse));

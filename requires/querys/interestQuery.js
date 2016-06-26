@@ -22,14 +22,14 @@ InterestQuery.addInterest = function(client,done,req,res){
     if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
 
     //TODO::VER QUE ENVIO SI YA EXISTE EL INTERES
-    if(QueryHelper.hasResult(result)) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
+    if(QueryHelper.hasResult(result)) return res.status(cStatus.ERROR).json({msg:"Interest already exist"});
 
     client.query("INSERT INTO interests(category,value) values($1,$2)",[interest.category,interest.value],function(err, result) {
       if(err) return QueryHelper.sendError(err,res,done,cStatus.ERROR);
       done();
 
       //ENVIO 200 CONFIRMANDO AGREGADO DE INTERES SATISFACTORIO
-      return res.status(cStatus.OK).json();
+      return res.status(cStatus.OK).json({msg:"Interest added succesfully"});
     });
   });
 };

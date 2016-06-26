@@ -11,7 +11,7 @@ app.controller('Controller', function($scope,$http) {
   $scope.ID=undefined;
   $scope.photo = undefined;
   $scope.interest={'category':undefined,'value':undefined};
-
+  $scope.response = undefined;
   //VARIABLES GLOBALES
   var data;
 
@@ -19,6 +19,17 @@ app.controller('Controller', function($scope,$http) {
   $scope.addUser = function() {
     for(var i in $scope.checkBoxes)
       if($scope.checkBoxes[i].check) $scope.user.interests.push({'category':$scope.checkBoxes[i].category,'value':$scope.checkBoxes[i].value});
+    $scope.photo = "no photo";
+    if($scope.user.email === undefined ||
+      $scope.user.name === undefined ||
+      $scope.user.alias === undefined ||
+      $scope.user.sex === undefined ||
+      $scope.user.age === undefined ||
+      $scope.user.location.longitude === undefined ||
+      $scope.user.location.latitude === undefined) {
+        $scope.response = "Complete fields";
+        return;
+      }
     $http({
       url: '/users',
       method: "POST",
@@ -27,9 +38,11 @@ app.controller('Controller', function($scope,$http) {
       },
       data: { 'user' : $scope.user}
     }).then(function(response) {
+      $scope.response = "Add user succesfully";
       console.log(response.data);
     },
     function(response) {
+      $scope.response = response.data.msg;
       console.error(response);
     });
   };
@@ -48,8 +61,17 @@ app.controller('Controller', function($scope,$http) {
 
   //ELIMINACION DE USUARIO
   $scope.deleteUser = function() {
+    if($scope.ID === undefined){
+      $scope.response = "Ingrese un ID de usuario";
+      return;
+    }
     $http.delete('/users/'+$scope.ID).then(function(response) {
+      $scope.response = response.data.msg;
       console.log(response);
+    },
+    function(response) {
+      $scope.response = response.data.msg;
+      console.error(response);
     });
   };
 
@@ -64,17 +86,25 @@ app.controller('Controller', function($scope,$http) {
   //GET DE USUARIO ESPECIFICO PARA MOSTRAR EN TABLA
   $scope.getUser = function() {
     $http.get("/users/"+$scope.ID).then(function(response) {
+      $scope.response = "Get user succesfully";
       console.log(response.data.user);
       $scope.user = [response.data.user];
-    });
+    },function(response) {
+       $scope.response = response.data.msg;
+       console.error(response);
+     });
   };
 
   //GET DE USUARIO PARA MODIFICAR
   $scope.getUserToModify = function() {
     $http.get("/users/"+$scope.ID).then(function(response) {
+      $scope.response = "Get user succesfully";
        console.log(response.data.user);
        $scope.user = response.data.user;
-     });
+     },function(response) {
+        $scope.user = response.data.msg;
+        console.error(response);
+      });
    };
 
   //GET DE TODOS LOS USUARIOS
@@ -135,15 +165,21 @@ app.controller('Controller', function($scope,$http) {
       },
       data:  { 'user' : $scope.user}
     }).then(function(response) {
+      $scope.response = "User modified succesfully";
       console.log(response.data);
     },
     function(response) {
+      $scope.response = response.data.msg;
       console.error(response);
     });
   };
 
   //ALTA DE INTERES
   $scope.addInterest = function() {
+    if($scope.interest.category === undefined || $scope.interest.value === undefined){
+      $scope.response = "Complete fields";
+      return;
+    }
     $http({
       url: '/interests',
       method: "POST",
@@ -152,9 +188,11 @@ app.controller('Controller', function($scope,$http) {
       },
       data: { 'interest' : $scope.interest}
     }).then(function(response) {
+      $scope.response = response.data.msg;
       console.log(response.data);
     },
     function(response) {
+      $scope.response = response.data.msg;
       console.error(response);
     });
   };
